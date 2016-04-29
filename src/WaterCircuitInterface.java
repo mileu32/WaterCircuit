@@ -16,17 +16,39 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.Timer;
+
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.World;
 
 public class WaterCircuitInterface extends JFrame implements ActionListener, MouseListener {
+	Water[] waters;
+	int  update_period = 60;
+	
 	JMenuBar menuBar;
 	JMenu fileMenu;
 	JMenuItem newMenuItem, loadMenuItem, saveMenuItem, saveasMenuItem;
 
 	WaterCircuitCanvas canvas;
 	JPanel optionPanel;
+	
+	
+	//Jbox2d
+	float timeStep = 1.0f/60.0f;
+    int velocityIterations = 6;
+    int positionIterations = 2;
+	Vec2  gravity = new Vec2(0,-10);
+    World world = new World(gravity);
 
 	WaterCircuitInterface() {
-		super("WaterCircuit v0.1.0b1 (BUILD 1) by mileu");
+		
+		super("WaterCircuit v0.1.0b1 (BUILD 2) by mileu");
+		
+		waters = new Water[10];
+		for (int i = 0; i < waters.length; i++) {
+			waters[i] = new Water(world);
+		}
+		
 		// for OS X
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		// Top Menu
@@ -54,6 +76,8 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		canvas = new WaterCircuitCanvas();
 		canvas.addMouseListener(this);
 		add(canvas);
+		Timer t = new Timer(update_period, this);
+		t.start();
 
 		optionPanel = new JPanel();
 		add(optionPanel);
@@ -61,6 +85,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		setVisible(true);
 		setSize(600, 300);
 		setLocation(100, 100);
+		
 		// pack();
 
 		// exit program, not only close window
@@ -75,6 +100,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 
+		canvas.repaint();
 	}
 
 	class WaterCircuitCanvas extends JPanel {
@@ -84,6 +110,13 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 			// TODO Auto-generated method stub
 			super.paintComponent(g);
 			setBackground(Color.BLACK);
+			world.step(timeStep, velocityIterations, positionIterations);
+			
+			for (int i = 0; i < waters.length; i++) {
+				if (waters[i].life) {
+					System.out.println(waters[i].speed);
+				}
+			}
 
 		}
 
