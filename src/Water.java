@@ -1,50 +1,43 @@
 import java.awt.Color;
 import java.util.Random;
 
-import org.jbox2d.collision.shapes.CircleShape;
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.FixtureDef;
-import org.jbox2d.dynamics.World;
-
 public class Water {
 	
 	boolean life;
-
-
-	 
-	public Vec2  speed;
-	Color col;
 	
-	BodyDef bodyDef;
-	Body waterBody;
-	CircleShape waterShape;
-	FixtureDef fixtureDef;
-	Water(World world) {
-		speed = new Vec2(0, 0);
-
-		bodyDef = new BodyDef();
-		bodyDef.type = BodyType.DYNAMIC;
-		waterBody = world.createBody(bodyDef);
-		waterShape = new CircleShape();
-		waterShape.setRadius(10);
-		fixtureDef = new FixtureDef();
-		fixtureDef.shape = waterShape;
-		fixtureDef.density = 1;
-	    fixtureDef.friction = 0.3f;
-	    waterBody.createFixture(fixtureDef);
-	    waterBody.setLinearVelocity(speed);
-	    
-	    
-
-		life = true;
+	static Random r = new Random();
+	
+	double lx, ly; // location x, location y
+	double sl; // speed limit
+	double vx, vy; //velocity x, velocity y
+	double mass;
+	double size;
+	
+	Color color;
+	
+	Water(double locationX, double locationY) {
+		this(locationX, locationY, 2*r.nextGaussian()-1, 2*r.nextGaussian()-1, 3, 5, 5, Color.CYAN);
 		
+
+		
+	}
+	
+	Water(double locationX, double locationY, double velocityX, double velocityY, double speedLimit, double mass, double size, Color color) {
+		life = true;
+		this.lx = locationX;
+		this.ly = locationY;
+		this.vx = velocityX;
+		this.vy = velocityY;
+		this.sl = speedLimit;
+		this.mass = mass;
+		this.size = size;
+		this.color = color;
 	}
 
 	public void update() {
-		Random r1 = new Random();
+
+		lx+=vx;
+		ly+=vy;
 
 	}
 
