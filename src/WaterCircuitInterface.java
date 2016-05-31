@@ -1,7 +1,9 @@
 import java.awt.Color;
 import java.awt.Event;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -9,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -19,7 +22,9 @@ import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
 public class WaterCircuitInterface extends JFrame implements ActionListener, MouseListener {
-	Water[] waters;
+	ArrayList<Water> waters;
+	ArrayList<Stick> sticks;
+	//Water[] waters;
 	int update_period = 60;
 
 	JMenuBar menuBar;
@@ -31,11 +36,13 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	WaterCircuitInterface() {
 
-		super("WaterCircuit v0.1.0b1 (BUILD 4) by mileu");
-
-		waters = new Water[100];
-		for (int i = 0; i < waters.length; i++) {
-			waters[i] = new Water(600,350);
+		super("WaterCircuit v0.1.0b1 (BUILD 5) by mileu");
+		
+		waters = new ArrayList<Water>();
+		sticks = new ArrayList<Stick>();
+		//waters = new Water[500];
+		for (int i = 0; i < 500; i++) {
+			waters.add(new Water(600,362));
 		}
 
 		// for OS X
@@ -74,7 +81,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		*/
 		
 		setVisible(true);
-		setSize(1200, 700);
+		setSize(1200, 725);
 		setLocation(40, 50);
 
 		// pack();
@@ -90,9 +97,9 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		for (int i = 0; i < waters.length; i++) {
-			if (waters[i].life) {
-				waters[i].update();
+		for (int i = 0; i < waters.size(); i++) {
+			if (waters.get(i).life) {
+				waters.get(i).update();
 			}
 		}
 		canvas.repaint();
@@ -103,14 +110,30 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		@Override
 		protected void paintComponent(Graphics g) {
 			// TODO Auto-generated method stub
+			
 			super.paintComponent(g);
+			Graphics2D g2 = (Graphics2D)g;
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			
 			setBackground(Color.BLACK);
 
-			for (int i = 0; i < waters.length; i++) {
-				if (waters[i].life) {
-					g.setColor(waters[i].color);
-					g.drawOval((int)waters[i].lx, (int)waters[i].ly, (int)waters[i].size, (int)waters[i].size);
+			for (int i = 0; i < 24; i++) {
+				for (int j = 0; j < 14; j++){
+					g.setColor(Color.orange);
+					g.drawOval(i*50 + 25 - 3, j*50 + 25 - 3, 6, 6);
 				}
+			}
+			
+			for (int i = 0; i < waters.size(); i++) {
+				if (waters.get(i).life) {
+					g.setColor(waters.get(i).color);
+					g.drawOval((int)waters.get(i).lx, (int)waters.get(i).ly, (int)waters.get(i).size, (int)waters.get(i).size);
+				}
+			}
+			
+			for (int i = 0; i < sticks.size(); i++) {
+				g.setColor(sticks.get(i).color);
+				g.drawLine((int)sticks.get(i).lx1, (int)sticks.get(i).ly1, (int)sticks.get(i).lx2, (int)sticks.get(i).ly2);
 			}
 
 		}
@@ -119,18 +142,37 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	public void waterEngine(Water water){
 		
+		for (int i = 0; i < waters.size(); i++) {
+			for (int j = 0; j < waters.size(); j++){
+				
+			}
+		}
 	}
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-
+		switch(e.getButton()){
+		case 1:
+			waters.add(new Water(e.getX(), e.getY()));
+			break;
+		case 2:
+			System.out.println("try to develop later.. zoom in and out");
+			break;
+		case 3:
+			sticks.add(new Stick(((int)(e.getX()-25)/50)*50+25, ((int)e.getY()/50)*50+25, ((int)(e.getX()-25)/50)*50+75, ((int)e.getY()/50)*50+25));
+			break;
+			
+			
+		}
+		
+		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
