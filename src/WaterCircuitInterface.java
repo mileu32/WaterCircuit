@@ -36,12 +36,12 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	WaterCircuitInterface() {
 
-		super("WaterCircuit v0.1.0b1 (BUILD 5) by mileu");
+		super("WaterCircuit v0.1.0b1 (BUILD 6) by mileu");
 		
 		waters = new ArrayList<Water>();
 		sticks = new ArrayList<Stick>();
 		//waters = new Water[500];
-		for (int i = 0; i < 500; i++) {
+		for (int i = 0; i < 10; i++) {
 			waters.add(new Water(600,362));
 		}
 
@@ -97,9 +97,11 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
+		waterEngine();
 		for (int i = 0; i < waters.size(); i++) {
-			if (waters.get(i).life) {
-				waters.get(i).update();
+			Water cacheWater = waters.get(i);
+			if (cacheWater.life) {
+				cacheWater.update();
 			}
 		}
 		canvas.repaint();
@@ -125,26 +127,46 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 			}
 			
 			for (int i = 0; i < waters.size(); i++) {
-				if (waters.get(i).life) {
-					g.setColor(waters.get(i).color);
-					g.drawOval((int)waters.get(i).lx, (int)waters.get(i).ly, (int)waters.get(i).size, (int)waters.get(i).size);
+				Water cacheWater = waters.get(i);
+				if (cacheWater.life) {
+					g.setColor(cacheWater.color);
+					g.drawOval((int)cacheWater.lx, (int)cacheWater.ly, (int)cacheWater.size, (int)cacheWater.size);
 				}
 			}
 			
 			for (int i = 0; i < sticks.size(); i++) {
-				g.setColor(sticks.get(i).color);
-				g.drawLine((int)sticks.get(i).lx1, (int)sticks.get(i).ly1, (int)sticks.get(i).lx2, (int)sticks.get(i).ly2);
+				Stick cacheStick = sticks.get(i);
+				g.setColor(cacheStick.color);
+				g.drawLine((int)cacheStick.lx1, (int)cacheStick.ly1, (int)cacheStick.lx2, (int)cacheStick.ly2);
 			}
 
 		}
 
 	}
 
-	public void waterEngine(Water water){
+	public void waterEngine(){
 		
 		for (int i = 0; i < waters.size(); i++) {
-			for (int j = 0; j < waters.size(); j++){
+			for (int j = 0; j < sticks.size(); j++){
+				Water cacheWater = waters.get(i);
+				Stick cacheStick = sticks.get(j);
+				//ax + by + c = 0
+				double a = cacheStick.ly2 - cacheStick.ly1;
+				double b = cacheStick.lx1 - cacheStick.lx2;
+				double c = cacheStick.ly1 * cacheStick.lx2 - cacheStick.lx1 * cacheStick.ly2;
 				
+				boolean ifCrossInfiniteLine = (a * cacheWater.lx + b * cacheWater.ly + c) * (a * (cacheWater.lx + cacheWater.vx) + b * (cacheWater.ly + cacheWater.vy) + c) < 0;
+				
+				if(ifCrossInfiniteLine){
+					//cross point between two line;
+					double px = ((cacheStick.lx1 * cacheStick.ly2 - cacheStick.ly1 * cacheStick.lx2) * (-cacheWater.vx) - (cacheStick.lx1 - cacheStick.lx2) * (cacheWater.lx * (cacheWater.ly + cacheWater.vy) - cacheWater.ly * (cacheWater.lx + cacheWater.vx)))/((cacheStick.lx1-cacheStick.lx2)*(-cacheWater.vy)-(cacheStick.ly1-cacheStick.ly2) * (-cacheWater.vx));
+					
+					boolean ifCrossLine = (px<=cacheStick.lx1 && px >=cacheStick.lx2) || (px<=cacheStick.lx2 && px >=cacheStick.lx1);
+					if (ifCrossLine){
+						System.out.println("collision!");
+						
+					}
+				}
 			}
 		}
 	}
