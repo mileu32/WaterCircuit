@@ -5,7 +5,7 @@ public class Water {
 
 	boolean life;
 	boolean updated;
-	
+
 	static Random r = new Random();
 
 	double lx, ly; // location x, location y
@@ -17,7 +17,12 @@ public class Water {
 	Color color;
 
 	Water(double locationX, double locationY) {
-		this(locationX, locationY, 2 * r.nextGaussian() - 1, 2 * r.nextGaussian() - 1, 3, 5, 4, Color.CYAN);
+		this(locationX, locationY, r.nextGaussian() / 8 - 1 / 16, r.nextGaussian() / 8 - 1 / 16, 1, 5, 4, Color.CYAN);
+
+	}
+	
+	Water(double locaionX, double locationY, double velocityX, double velocityY) {
+		this(locaionX, locationY, velocityX, velocityY, 1, 5, 4, Color.CYAN);
 
 	}
 
@@ -35,9 +40,9 @@ public class Water {
 	}
 
 	public void update() {
-		if(!updated){
-		lx += vx;
-		ly += vy;
+		if (!updated) {
+			lx += vx;
+			ly += vy;
 		}
 		updated = false;
 
