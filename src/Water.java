@@ -4,7 +4,8 @@ import java.util.Random;
 public class Water {
 
 	boolean life;
-
+	boolean updated;
+	
 	static Random r = new Random();
 
 	double lx, ly; // location x, location y
@@ -34,9 +35,11 @@ public class Water {
 	}
 
 	public void update() {
-
+		if(!updated){
 		lx += vx;
 		ly += vy;
+		}
+		updated = false;
 
 	}
 

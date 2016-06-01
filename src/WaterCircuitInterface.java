@@ -36,7 +36,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	WaterCircuitInterface() {
 
-		super("WaterCircuit v0.1.0b1 (BUILD 6) by mileu");
+		super("WaterCircuit v0.1.0b1 (BUILD 7) by mileu");
 		
 		waters = new ArrayList<Water>();
 		sticks = new ArrayList<Stick>();
@@ -160,10 +160,37 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 				if(ifCrossInfiniteLine){
 					//cross point between two line;
 					double px = ((cacheStick.lx1 * cacheStick.ly2 - cacheStick.ly1 * cacheStick.lx2) * (-cacheWater.vx) - (cacheStick.lx1 - cacheStick.lx2) * (cacheWater.lx * (cacheWater.ly + cacheWater.vy) - cacheWater.ly * (cacheWater.lx + cacheWater.vx)))/((cacheStick.lx1-cacheStick.lx2)*(-cacheWater.vy)-(cacheStick.ly1-cacheStick.ly2) * (-cacheWater.vx));
-					
 					boolean ifCrossLine = (px<=cacheStick.lx1 && px >=cacheStick.lx2) || (px<=cacheStick.lx2 && px >=cacheStick.lx1);
 					if (ifCrossLine){
-						System.out.println("collision!");
+						Double cache = (((cacheWater.lx + cacheWater.vx) - cacheStick.lx1) * (cacheStick.lx2 - cacheStick.lx1) + ((cacheWater.ly + cacheWater.vy) - cacheStick.ly1) * (cacheStick.ly2 - cacheStick.ly1)) / ((cacheStick.lx2-cacheStick.lx1) * (cacheStick.lx2 - cacheStick.lx1) + (cacheStick.ly2-cacheStick.ly1) * (cacheStick.ly2 - cacheStick.ly1));
+
+						//막대는 정지했다고 가정
+						Double colisionX = cache * (cacheStick.lx2 - cacheStick.lx1) + cacheStick.lx1;
+						Double colisionY = cache * (cacheStick.ly2 - cacheStick.ly1) + cacheStick.ly1;
+						
+						Double afterColisionX = 2 * colisionX - (cacheWater.lx + cacheWater.vx);
+						Double afterColisionY = 2 * colisionY - (cacheWater.ly + cacheWater.vy);
+						
+						//not yet set after v
+						Double beforeSpeed = Math.sqrt(cacheWater.vx * cacheWater.vx + cacheWater.vy * cacheWater.vy);
+						Double cacheS = (cacheWater.vy * a - cacheWater.vx * b) / (a * a + b * b);
+						Double afterSpeedX, afterSpeedY;
+						Double afterSpeed;
+						afterSpeedX = 2 * b * cacheS + cacheWater.vx;
+						afterSpeedY = cacheWater.vy - 2 * a * cacheS;
+						afterSpeed = Math.sqrt(afterSpeedX * afterSpeedX + afterSpeedY * afterSpeedY);
+						afterSpeedX = - afterSpeedX * beforeSpeed / afterSpeed;
+						afterSpeedY = - afterSpeedY * beforeSpeed / afterSpeed;
+						
+						waters.get(i).updated = true;
+						waters.get(i).lx = afterColisionX;
+						waters.get(i).ly = afterColisionY;
+						waters.get(i).vx = afterSpeedX;
+						waters.get(i).vy = afterSpeedY;
+						
+						
+						System.out.println("collision! x : " + afterColisionX + ", y : " + afterColisionY );
+						
 						
 					}
 				}
