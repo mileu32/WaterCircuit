@@ -36,13 +36,13 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	WaterCircuitInterface() {
 
-		super("WaterCircuit v0.1.0b1 (BUILD 8) by mileu");
+		super("WaterCircuit v0.1.0b1 (BUILD 9) by mileu");
 
 		waters = new ArrayList<Water>();
 		sticks = new ArrayList<Stick>();
 
-		for (int i = 0; i < 1000; i++) waters.add(new Water(50, 362));
-		for (int i = 0; i < 1000; i++) waters.add(new Water(1150, 362));
+		//for (int i = 0; i < 1000; i++) waters.add(new Water(50, 362));
+		for (int i = 0; i < 200; i++) waters.add(new Water(950, 400));
 		
 		sticks.add(new Stick(25, 275, 1175, 275));
 		sticks.add(new Stick(75, 325, 1125, 325));
@@ -52,6 +52,22 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		sticks.add(new Stick(1125, 325, 1125, 375));
 		sticks.add(new Stick(25, 275, 25, 425));
 		sticks.add(new Stick(1175, 275, 1175, 425));
+		
+		sticks.add(new Stick(25, 325, 75, 275));
+		sticks.add(new Stick(25, 375, 75, 425));
+		sticks.add(new Stick(1175, 325, 1125, 275));
+		sticks.add(new Stick(1175, 375, 1125, 425));
+		
+		//sticks.add(new Stick(330, 275, 630, 300));
+		//sticks.add(new Stick(630, 275, 630, 300));
+		
+		//sticks.add(new Stick(130, 325, 430, 300));
+		//sticks.add(new Stick(430, 325, 430, 300));
+		
+		//sticks.add(new Stick(230, 390, 230, 425));
+		//sticks.add(new Stick(230, 390, 930, 425));
+		
+		
 
 		// for OS X
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -141,13 +157,62 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 				g.drawLine((int) cacheStick.lx1, (int) cacheStick.ly1, (int) cacheStick.lx2, (int) cacheStick.ly2);
 			}
 
-		}
+		} 
 
 	}
 
 	public void waterEngine(int frequency) {
 		for (int n = 0; n < frequency; n++) {
+			
+			//force between two water
+			//System.out.println(waters.size());
 			for (int i = 0; i < waters.size(); i++) {
+				//force between two water
+				for(int j = i+1; j < waters.size(); j++){
+
+					Water cw1 = waters.get(i);
+					Water cw2 = waters.get(j);
+					double length = Math.sqrt((cw1.lx-cw2.lx)*(cw1.lx-cw2.lx) + (cw1.ly-cw2.ly)*(cw1.ly-cw2.ly));
+					if(length < 50 && length > 0){
+						//constant is just...optional??(임의의)
+						double force = 1/(length*length);
+						if (force > 1) force = 0;
+						double forceX = force * (cw1.lx - cw2.lx) / length;
+						double forceY = force * (cw1.ly - cw2.ly) / length;
+						
+						waters.get(i).vx += forceX/waters.get(i).mass;
+						waters.get(i).vy += forceY/waters.get(i).mass;
+						
+						waters.get(j).vx += -forceX/waters.get(j).mass;
+						waters.get(j).vy += -forceY/waters.get(j).mass;
+						
+					}
+					
+				}
+			}
+			/*
+			
+			for(int i = 0; i < waters.size(); i++) {
+				Water cw = waters.get(i);
+				double speed = Math.sqrt(cw.vx*cw.vx + cw.vy*cw.vy);
+				waters.get(i).vx = waters.get(i).vx * waters.get(i).sl / speed;
+				waters.get(i).vy = waters.get(i).vy * waters.get(i).sl / speed;
+
+			}
+			*/
+			
+			for (int i = 0; i < waters.size(); i++) {
+				//visual.
+				// <- red, -> cyan
+				if(waters.get(i).vx<0) waters.get(i).color = Color.red;
+				else waters.get(i).color = Color.cyan;
+				//make slow one not show.
+				//if((waters.get(i).vx<0.1 && waters.get(i).vx>-0.1) && (waters.get(i).vy<0.1 && waters.get(i).vy>-0.1)) waters.get(i).color = new Color(0, 0, 0, 0);
+				
+				//battery
+				if(waters.get(i).lx>900 && waters.get(i).lx < 1000 && waters.get(i).ly>375 && waters.get(i).ly < 425) waters.get(i).vx -= 0.001;
+				
+				//force(?) between stick and water
 				Water cacheWater = waters.get(i);
 				for (int j = 0; j < sticks.size(); j++) {
 
@@ -216,6 +281,9 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 							waters.get(i).ly = afterColisionY;
 							waters.get(i).vx = afterSpeedX;
 							waters.get(i).vy = afterSpeedY;
+							
+							waters.get(i).vx *= 0.9;
+							waters.get(i).vy *= 0.9;
 
 						}
 					}
@@ -230,7 +298,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		// TODO Auto-generated method stub
 		switch (e.getButton()) {
 		case 1:
-			waters.add(new Water(e.getX(), e.getY()));
+			waters.add(new Water(e.getX(), e.getY(), 0,0));
 			break;
 		case 2:
 			System.out.println("try to develop later.. zoom in and out");
