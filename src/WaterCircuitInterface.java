@@ -37,7 +37,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	WaterCircuitInterface() {
 
-		super("WaterCircuit v0.1.0b1 (BUILD 10) by mileu");
+		super("WaterCircuit v0.1.0b1 (BUILD 11) by mileu");
 
 		waters = new ArrayList<Water>();
 		sticks = new ArrayList<Stick>();
@@ -290,12 +290,13 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 							waters.get(i).vx = afterSpeedX;
 							waters.get(i).vy = afterSpeedY;
 							
-							waters.get(i).vx *= 0.9;
-							waters.get(i).vy *= 0.9;
+							
 
 						}
 					}
 				}
+				waters.get(i).vx *= 0.999;
+				waters.get(i).vy *= 0.999;
 				waters.get(i).update();
 			}
 		}

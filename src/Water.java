@@ -39,6 +39,10 @@ public class Water {
 		this.color = color;
 	}
 
+	public void apply() {
+		
+	}
+	
 	public void update() {
 		if (!updated) {
 			lx += vx;
