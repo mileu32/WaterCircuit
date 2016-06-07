@@ -1,7 +1,7 @@
 import java.awt.Color;
 import java.util.Random;
 
-public class Stick {
+class Stick {
 
 	static Random r = new Random();
 
