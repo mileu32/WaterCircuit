@@ -26,7 +26,8 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	ArrayList<Stick> sticks;
 
 	int update_period = 60;
-
+	int max_number = 700;
+	
 	JMenuBar menuBar;
 	JMenu fileMenu;
 	JMenuItem newMenuItem, loadMenuItem, saveMenuItem, saveasMenuItem;
@@ -36,22 +37,22 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	WaterCircuitInterface() {
 
-		super("WaterCircuit v0.1.0b1 (BUILD 9) by mileu");
+		super("WaterCircuit v0.1.0b1 (BUILD 10) by mileu");
 
 		waters = new ArrayList<Water>();
 		sticks = new ArrayList<Stick>();
 
 		//for (int i = 0; i < 1000; i++) waters.add(new Water(50, 362));
-		for (int i = 0; i < 200; i++) waters.add(new Water(950, 400));
+		//for (int i = 0; i < max_number; i++) waters.add(new Water(950, 400));
 		
-		sticks.add(new Stick(25, 275, 1175, 275));
+		sticks.add(new Stick(75, 275, 1125, 275));
 		sticks.add(new Stick(75, 325, 1125, 325));
 		sticks.add(new Stick(75, 375, 1125, 375));
-		sticks.add(new Stick(25, 425, 1175, 425));
+		sticks.add(new Stick(75, 425, 1125, 425));
 		sticks.add(new Stick(75, 325, 75, 375));
 		sticks.add(new Stick(1125, 325, 1125, 375));
-		sticks.add(new Stick(25, 275, 25, 425));
-		sticks.add(new Stick(1175, 275, 1175, 425));
+		sticks.add(new Stick(25, 325, 25, 375));
+		sticks.add(new Stick(1175, 325, 1175, 375));
 		
 		sticks.add(new Stick(25, 325, 75, 275));
 		sticks.add(new Stick(25, 375, 75, 425));
@@ -121,6 +122,13 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		waterEngine(16);
+		if(waters.size()<max_number) waters.add(new Water(950, 400));
+		for(int i = 0; i < waters.size(); i++){
+			if(waters.get(i).lx < 0 || waters.get(i).lx > 1300 || waters.get(i).ly < 0 || waters.get(i).ly >1000){
+				waters.remove(i);
+				System.out.println("removed!");
+			}
+		}
 		canvas.repaint();
 	}
 
