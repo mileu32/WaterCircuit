@@ -43,7 +43,6 @@ class Stick {
 	}
 
 	public double check(int mouseX, int mouseY) {
-		// TODO Auto-generated method stub
 
 		return 0;
 	} // check()

@@ -26,7 +26,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	ArrayList<Stick> sticks;
 
 	int update_period = 60;
-	int max_number = 700;
+	int max_number = 800;
 
 	JMenuBar menuBar;
 	JMenu fileMenu;
@@ -37,7 +37,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	WaterCircuitInterface() {
 
-		super("WaterCircuit v0.1.0b1 (BUILD 12) by mileu");
+		super("WaterCircuit v0.1.0b1 (BUILD 13) by mileu");
 
 		waters = new ArrayList<Water>();
 		sticks = new ArrayList<Stick>();
@@ -119,7 +119,10 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		waterEngine(16);
+		waterEngine(4);
+		//waterEngine(4);
+		//waterEngine(4);
+		//waterEngine(4);
 		if (waters.size() < max_number)
 			waters.add(new Water(950, 400));
 		for (int i = 0; i < waters.size(); i++) {
@@ -168,24 +171,129 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	}
 
+	public void semiWaterStickEngine(Water water, int neglect) {
+		// battery
+		if (water.lx > 900 && water.lx < 1000 && water.ly > 375 && water.ly < 425) water.vx -= 0.064;
+
+		// force(?) between stick and water
+		int collisionStickNum = -1;
+
+		double collisionStickX = 0, collisionStickY = 0;
+
+		for (int j = 0; j < sticks.size(); j++) {
+			if (j != neglect) {
+				Stick cacheStick = sticks.get(j);
+				// ax + by + c = 0
+				double a = cacheStick.ly2 - cacheStick.ly1;
+				double b = cacheStick.lx1 - cacheStick.lx2;
+				double c = cacheStick.ly1 * cacheStick.lx2 - cacheStick.lx1 * cacheStick.ly2;
+
+				boolean ifCrossInfiniteLine = (a * water.lx + b * water.ly + c)
+						* (a * (water.lx + water.vx) + b * (water.ly + water.vy) + c) < 0;
+
+				if (ifCrossInfiniteLine) {
+
+					// cross point between two line;
+					double px = ((cacheStick.lx1 * cacheStick.ly2 - cacheStick.ly1 * cacheStick.lx2) * (-water.vx)
+							- (cacheStick.lx1 - cacheStick.lx2)
+									* (water.lx * (water.ly + water.vy) - water.ly * (water.lx + water.vx)))
+							/ ((cacheStick.lx1 - cacheStick.lx2) * (-water.vy)
+									- (cacheStick.ly1 - cacheStick.ly2) * (-water.vx));
+
+					double py = ((cacheStick.lx1 * cacheStick.ly2 - cacheStick.ly1 * cacheStick.lx2) * (-water.vy)
+							- (cacheStick.ly1 - cacheStick.ly2)
+									* (water.lx * (water.ly + water.vy) - water.ly * (water.lx + water.vx)))
+							/ ((cacheStick.lx1 - cacheStick.lx2) * (-water.vy)
+									- (cacheStick.ly1 - cacheStick.ly2) * (-water.vx));
+					// 실수 오차 해결..
+					double verySmallD = 0.00001;
+					boolean ifCrossLine = ((py <= cacheStick.ly1 + verySmallD && py >= cacheStick.ly2 - verySmallD)
+							|| (py <= cacheStick.ly2 + verySmallD && py >= cacheStick.ly1 - verySmallD))
+							&& ((px <= cacheStick.lx1 + verySmallD && px >= cacheStick.lx2 - verySmallD)
+									|| (px <= cacheStick.lx2 + verySmallD && px >= cacheStick.lx1 - verySmallD));
+
+					if (ifCrossLine) {
+
+						if (collisionStickNum == -1) {
+							collisionStickNum = j;
+							collisionStickX = px;
+							collisionStickY = py;
+						} else {
+							if ((water.lx - collisionStickX) * (water.lx - collisionStickX)
+									+ (water.ly - collisionStickY) * (water.lx - collisionStickY) > (water.lx - px)
+											* (water.lx - px) + (water.ly - py) * (water.lx - py)) {
+								collisionStickNum = j;
+								collisionStickX = px;
+								collisionStickY = py;
+							}
+						}
+					}
+				}
+			}
+		}
+		if (collisionStickNum != -1) {
+			Stick cacheStick = sticks.get(collisionStickNum);
+			double a = cacheStick.ly2 - cacheStick.ly1;
+			double b = cacheStick.lx1 - cacheStick.lx2;
+
+			Double cache = (((water.lx + water.vx) - cacheStick.lx1) * (cacheStick.lx2 - cacheStick.lx1)
+					+ ((water.ly + water.vy) - cacheStick.ly1) * (cacheStick.ly2 - cacheStick.ly1))
+					/ ((cacheStick.lx2 - cacheStick.lx1) * (cacheStick.lx2 - cacheStick.lx1)
+							+ (cacheStick.ly2 - cacheStick.ly1) * (cacheStick.ly2 - cacheStick.ly1));
+
+			// 막대는 정지했다고 가정
+			Double colisionX = cache * (cacheStick.lx2 - cacheStick.lx1) + cacheStick.lx1;
+			Double colisionY = cache * (cacheStick.ly2 - cacheStick.ly1) + cacheStick.ly1;
+
+			Double afterColisionX = 2 * colisionX - (water.lx + water.vx);
+			Double afterColisionY = 2 * colisionY - (water.ly + water.vy);
+
+			// not yet set after v
+			Double beforeSpeed = Math.sqrt(water.vx * water.vx + water.vy * water.vy);
+			Double cacheS = (water.vy * a - water.vx * b) / (a * a + b * b);
+			Double afterSpeedX, afterSpeedY;
+			Double afterSpeed;
+			afterSpeedX = 2 * b * cacheS + water.vx;
+			afterSpeedY = water.vy - 2 * a * cacheS;
+			afterSpeed = Math.sqrt(afterSpeedX * afterSpeedX + afterSpeedY * afterSpeedY);
+			afterSpeedX = -afterSpeedX * beforeSpeed / afterSpeed;
+			afterSpeedY = -afterSpeedY * beforeSpeed / afterSpeed;
+
+			
+			//water.updated = true;
+			water.lx = afterColisionX - afterSpeedX;
+			water.ly = afterColisionY - afterSpeedY;
+			water.vx = afterSpeedX;
+			water.vy = afterSpeedY;
+			
+			
+			/*
+			water.lx = afterColisionX - afterSpeedX;
+			water.ly = afterColisionY - afterSpeedY;
+			water.vx = afterSpeedX;
+			water.vy = afterSpeedY;
+			*/
+			
+			semiWaterStickEngine(water, collisionStickNum);
+
+		}
+	}
+
 	public void waterEngine(int frequency) {
 		for (int n = 0; n < frequency; n++) {
 
 			// force between two water
-			// System.out.println(waters.size());
 			for (int i = 0; i < waters.size(); i++) {
 				// force between two water
 				for (int j = i + 1; j < waters.size(); j++) {
 
 					Water cw1 = waters.get(i);
 					Water cw2 = waters.get(j);
-					double length = Math
-							.sqrt((cw1.lx - cw2.lx) * (cw1.lx - cw2.lx) + (cw1.ly - cw2.ly) * (cw1.ly - cw2.ly));
+					double length = Math.sqrt((cw1.lx - cw2.lx) * (cw1.lx - cw2.lx) + (cw1.ly - cw2.ly) * (cw1.ly - cw2.ly));
 					if (length < 50 && length > 0) {
 						// constant is just...optional??(임의의)
-						double force = 1 / (length * length);
-						if (force > 1)
-							force = 0;
+						double force = 64 / (length * length);
+						if (force > 4) force = 0;
 						double forceX = force * (cw1.lx - cw2.lx) / length;
 						double forceY = force * (cw1.ly - cw2.ly) / length;
 
@@ -196,142 +304,23 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 						waters.get(j).vy += -forceY / waters.get(j).mass;
 
 					}
-
 				}
 			}
-			/*
-			 * 
-			 * for(int i = 0; i < waters.size(); i++) { Water cw =
-			 * waters.get(i); double speed = Math.sqrt(cw.vx*cw.vx +
-			 * cw.vy*cw.vy); waters.get(i).vx = waters.get(i).vx *
-			 * waters.get(i).sl / speed; waters.get(i).vy = waters.get(i).vy *
-			 * waters.get(i).sl / speed;
-			 * 
-			 * }
-			 */
 
 			for (int i = 0; i < waters.size(); i++) {
 				// visual.
 				// <- red, -> cyan
-				if (waters.get(i).vx < 0)
-					waters.get(i).color = Color.red;
-				else
-					waters.get(i).color = Color.cyan;
-				// make slow one not show.
-				// if((waters.get(i).vx<0.1 && waters.get(i).vx>-0.1) &&
-				// (waters.get(i).vy<0.1 && waters.get(i).vy>-0.1))
-				// waters.get(i).color = new Color(0, 0, 0, 0);
+				semiWaterStickEngine(waters.get(i), -1);
 
-				// battery
-				if (waters.get(i).lx > 900 && waters.get(i).lx < 1000 && waters.get(i).ly > 375
-						&& waters.get(i).ly < 425)
-					waters.get(i).vx -= 0.001;
-
-				// force(?) between stick and water
-				Water cacheWater = waters.get(i);
-
-				int collisionStickNum = -1;
-				double collisionStickX = 0, collisionStickY = 0;
-
-				for (int j = 0; j < sticks.size(); j++) {
-
-					Stick cacheStick = sticks.get(j);
-					// ax + by + c = 0
-					double a = cacheStick.ly2 - cacheStick.ly1;
-					double b = cacheStick.lx1 - cacheStick.lx2;
-					double c = cacheStick.ly1 * cacheStick.lx2 - cacheStick.lx1 * cacheStick.ly2;
-
-					boolean ifCrossInfiniteLine = (a * cacheWater.lx + b * cacheWater.ly + c)
-							* (a * (cacheWater.lx + cacheWater.vx) + b * (cacheWater.ly + cacheWater.vy) + c) < 0;
-
-					if (ifCrossInfiniteLine) {
-
-						// cross point between two line;
-						double px = ((cacheStick.lx1 * cacheStick.ly2 - cacheStick.ly1 * cacheStick.lx2)
-								* (-cacheWater.vx)
-								- (cacheStick.lx1 - cacheStick.lx2) * (cacheWater.lx * (cacheWater.ly + cacheWater.vy)
-										- cacheWater.ly * (cacheWater.lx + cacheWater.vx)))
-								/ ((cacheStick.lx1 - cacheStick.lx2) * (-cacheWater.vy)
-										- (cacheStick.ly1 - cacheStick.ly2) * (-cacheWater.vx));
-
-						double py = ((cacheStick.lx1 * cacheStick.ly2 - cacheStick.ly1 * cacheStick.lx2)
-								* (-cacheWater.vy)
-								- (cacheStick.ly1 - cacheStick.ly2) * (cacheWater.lx * (cacheWater.ly + cacheWater.vy)
-										- cacheWater.ly * (cacheWater.lx + cacheWater.vx)))
-								/ ((cacheStick.lx1 - cacheStick.lx2) * (-cacheWater.vy)
-										- (cacheStick.ly1 - cacheStick.ly2) * (-cacheWater.vx));
-						// 실수 오차 해결..
-						double verySmallD = 0.0001;
-						boolean ifCrossLine = ((py <= cacheStick.ly1 + verySmallD && py >= cacheStick.ly2 - verySmallD)
-								|| (py <= cacheStick.ly2 + verySmallD && py >= cacheStick.ly1 - verySmallD))
-								&& ((px <= cacheStick.lx1 + verySmallD && px >= cacheStick.lx2 - verySmallD)
-										|| (px <= cacheStick.lx2 + verySmallD && px >= cacheStick.lx1 - verySmallD));
-						// System.out.println("px : "+px+", py : "+py);
-						// System.out.println(cacheStick.lx1 + ":" +
-						// cacheStick.lx2);
-						// System.out.println(cacheStick.ly1 + ":" +
-						// cacheStick.ly2);
-						if (ifCrossLine) {
-
-							if (collisionStickNum == -1) {
-								collisionStickNum = j;
-								collisionStickX = px;
-								collisionStickY = py;
-							} else {
-								if ((cacheWater.lx - collisionStickX) * (cacheWater.lx - collisionStickX)
-										+ (cacheWater.ly - collisionStickY)
-												* (cacheWater.lx - collisionStickY) > (cacheWater.lx - px)
-														* (cacheWater.lx - px)
-														+ (cacheWater.ly - py) * (cacheWater.lx - py)) {
-									collisionStickNum = j;
-									collisionStickX = px;
-									collisionStickY = py;
-								}
-							}
-						}
-					}
-				}
-				if (collisionStickNum != -1) {
-					Stick cacheStick = sticks.get(collisionStickNum);
-					double a = cacheStick.ly2 - cacheStick.ly1;
-					double b = cacheStick.lx1 - cacheStick.lx2;
-					double c = cacheStick.ly1 * cacheStick.lx2 - cacheStick.lx1 * cacheStick.ly2;
-
-					Double cache = (((cacheWater.lx + cacheWater.vx) - cacheStick.lx1)
-							* (cacheStick.lx2 - cacheStick.lx1)
-							+ ((cacheWater.ly + cacheWater.vy) - cacheStick.ly1) * (cacheStick.ly2 - cacheStick.ly1))
-							/ ((cacheStick.lx2 - cacheStick.lx1) * (cacheStick.lx2 - cacheStick.lx1)
-									+ (cacheStick.ly2 - cacheStick.ly1) * (cacheStick.ly2 - cacheStick.ly1));
-
-					// 막대는 정지했다고 가정
-					Double colisionX = cache * (cacheStick.lx2 - cacheStick.lx1) + cacheStick.lx1;
-					Double colisionY = cache * (cacheStick.ly2 - cacheStick.ly1) + cacheStick.ly1;
-
-					Double afterColisionX = 2 * colisionX - (cacheWater.lx + cacheWater.vx);
-					Double afterColisionY = 2 * colisionY - (cacheWater.ly + cacheWater.vy);
-
-					// not yet set after v
-					Double beforeSpeed = Math.sqrt(cacheWater.vx * cacheWater.vx + cacheWater.vy * cacheWater.vy);
-					Double cacheS = (cacheWater.vy * a - cacheWater.vx * b) / (a * a + b * b);
-					Double afterSpeedX, afterSpeedY;
-					Double afterSpeed;
-					afterSpeedX = 2 * b * cacheS + cacheWater.vx;
-					afterSpeedY = cacheWater.vy - 2 * a * cacheS;
-					afterSpeed = Math.sqrt(afterSpeedX * afterSpeedX + afterSpeedY * afterSpeedY);
-					afterSpeedX = -afterSpeedX * beforeSpeed / afterSpeed;
-					afterSpeedY = -afterSpeedY * beforeSpeed / afterSpeed;
-
-					waters.get(i).updated = true;
-					waters.get(i).lx = afterColisionX;
-					waters.get(i).ly = afterColisionY;
-					waters.get(i).vx = afterSpeedX;
-					waters.get(i).vy = afterSpeedY;
-				}
-
-				waters.get(i).vx *= 0.999;
-				waters.get(i).vy *= 0.999;
+				if (waters.get(i).vx < 0) waters.get(i).color = Color.red;
+				else waters.get(i).color = Color.cyan;
+				
 				waters.get(i).update();
+				waters.get(i).vx *= 0.988;
+				waters.get(i).vy *= 0.988;
 			}
+			
+			
 		}
 	}
 

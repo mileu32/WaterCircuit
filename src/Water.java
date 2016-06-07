@@ -17,7 +17,7 @@ public class Water {
 	Color color;
 
 	Water(double locationX, double locationY) {
-		this(locationX, locationY, r.nextGaussian() / 8 - 1 / 16, r.nextGaussian() / 8 - 1 / 16, 1, 5, 4, Color.CYAN);
+		this(locationX, locationY, r.nextGaussian() / 2 - 1 / 4, r.nextGaussian() / 2 - 1 / 4, 1, 5, 4, Color.CYAN);
 
 	}
 	
