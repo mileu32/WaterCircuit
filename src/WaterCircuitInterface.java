@@ -23,11 +23,11 @@ import javax.swing.Timer;
 
 public class WaterCircuitInterface extends JFrame implements ActionListener, MouseListener {
 	ArrayList<Object> objects;
-	ArrayList<Water> waters;
-	ArrayList<Stick> sticks;
-
-	int update_period = 60;
-	int max_number = 700;
+	
+	Water classWater = new Water(0,0);
+	Stick classStick = new Stick(0,0,10,10,true);
+	final int update_period = 60;
+	final int max_number = 500;
 
 	JMenuBar menuBar;
 	JMenu fileMenu;
@@ -38,31 +38,23 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	WaterCircuitInterface() {
 
-		super("WaterCircuit v0.1.0b2 (BUILD 15) by mileu");
-		
-		objects = new ArrayList<Object>();
-		
-		waters = new ArrayList<Water>();
-		sticks = new ArrayList<Stick>();
-		
-		sticks.add(new Stick(75, 275, 1125, 275, true));
-		sticks.add(new Stick(75, 325, 1125, 325, true));
-		sticks.add(new Stick(75, 375, 1125, 375, true));
-		sticks.add(new Stick(75, 425, 1125, 425, true));
-		sticks.add(new Stick(75, 325, 75, 375, true));
-		sticks.add(new Stick(1125, 325, 1125, 375, true));
-		sticks.add(new Stick(25, 325, 25, 375, true));
-		sticks.add(new Stick(1175, 325, 1175, 375, true));
+		super("WaterCircuit v0.1.0b2 (BUILD 16) by mileu");
 
-		sticks.add(new Stick(25, 325, 75, 275, true));
-		sticks.add(new Stick(25, 375, 75, 425, true));
-		sticks.add(new Stick(1175, 325, 1125, 275, true));
-		sticks.add(new Stick(1175, 375, 1125, 425, true));
-		
-		waters.add(new Water(75, 325, 0, 0, 987654321));
-		waters.add(new Water(75, 375, 0, 0, 987654321));
-		waters.add(new Water(1125, 325, 0, 0, 987654321));
-		waters.add(new Water(1125, 375, 0, 0, 987654321));
+		objects = new ArrayList<Object>();
+
+		objects.add(new Stick(75, 275, 1125, 275, true));
+		objects.add(new Stick(75, 325, 1125, 325, true));
+		objects.add(new Stick(75, 375, 1125, 375, true));
+		objects.add(new Stick(75, 425, 1125, 425, true));
+		objects.add(new Stick(75, 325, 75, 375, true));
+		objects.add(new Stick(1125, 325, 1125, 375, true));
+		objects.add(new Stick(25, 325, 25, 375, true));
+		objects.add(new Stick(1175, 325, 1175, 375, true));
+
+		objects.add(new Stick(25, 325, 75, 275, true));
+		objects.add(new Stick(25, 375, 75, 425, true));
+		objects.add(new Stick(1175, 325, 1125, 275, true));
+		objects.add(new Stick(1175, 375, 1125, 425, true));
 
 		// for OS X
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -117,16 +109,9 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 		waterEngine(16);
 
-		if (waters.size() < max_number)
-			waters.add(new Water(950, 400));
-		
-		for (int i = 0; i < waters.size(); i++) {
-			if (waters.get(i).lx < 0 || waters.get(i).lx > 1200 || waters.get(i).ly < 0 || waters.get(i).ly > 725) {
-				waters.remove(i);
-				System.out.println("removed!");
-			}
-		}
-		
+		if (objects.size() < max_number)
+			objects.add(new Water(950, 400));
+
 		canvas.repaint();
 	}
 
@@ -148,171 +133,101 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 				}
 			}
 
-			for (int i = 0; i < waters.size(); i++) {
-				Water cacheWater = waters.get(i);
-				if (cacheWater.ifDraw) {
-					g.setColor(cacheWater.color);
-					g.drawOval((int) (cacheWater.lx - cacheWater.size/2), (int) (cacheWater.ly - cacheWater.size/2), (int) cacheWater.size, (int) cacheWater.size);
+			
+			for (int i = 0; i < objects.size(); i++) {
+				if (objects.get(i).getClass() == classWater.getClass()) {
+					Water cacheWater = (Water) objects.get(i);
+					
+					if (cacheWater.ifDraw) {
+						g.setColor(cacheWater.color);
+						g.drawOval((int) (cacheWater.lx - cacheWater.size / 2),
+								(int) (cacheWater.ly - cacheWater.size / 2), (int) cacheWater.size,
+								(int) cacheWater.size);
+					}
+				} else if (objects.get(i).getClass() == classStick.getClass()) {
+					Stick cacheStick = (Stick) objects.get(i);
+					g.setColor(cacheStick.color);
+					g.drawLine((int) cacheStick.lx1, (int) cacheStick.ly1, (int) cacheStick.lx2, (int) cacheStick.ly2);
+
 				}
 			}
-
-			for (int i = 0; i < sticks.size(); i++) {
-				Stick cacheStick = sticks.get(i);
-				g.setColor(cacheStick.color);
-				g.drawLine((int) cacheStick.lx1, (int) cacheStick.ly1, (int) cacheStick.lx2, (int) cacheStick.ly2);
-			}
-
 		}
-
 	}
 
-	public void semiWaterStickEngine(Water water, int neglect, int depth) {
-		if (depth > 10) return;
+	public void semiWaterEngine(Water water1, Water water2) {
+		double length = Math.sqrt(
+				(water1.lx - water2.lx) * (water1.lx - water2.lx) + (water1.ly - water2.ly) * (water1.ly - water2.ly));
 		
-		// battery
-		if (water.lx > 900 && water.lx < 1000 && water.ly > 375 && water.ly < 425) water.vx -= 0.064;
+		if (length < 50 && length > 0) {
+			// constant is just...optional??(임의의)
+			double force = 64 / (length * length);
+			if (force > 4)
+				force = 4;
+			double forceX = force * (water1.lx - water2.lx) / length;
+			double forceY = force * (water1.ly - water2.ly) / length;
 
-		// force(?) between stick and water
-		int collisionStickNum = -1;
-		double collisionStickX = 0, collisionStickY = 0;
+			if (!water1.ifStatic) {
+				
+				water1.vx += forceX / water1.mass;
+				water1.vy += forceY / water1.mass;
+			}
 
-		for (int j = 0; j < sticks.size(); j++) {
-			if (j != neglect) {
-				Stick cacheStick = sticks.get(j);
-				// ax + by + c = 0
-				double a = cacheStick.ly2 - cacheStick.ly1;
-				double b = cacheStick.lx1 - cacheStick.lx2;
-				double c = cacheStick.ly1 * cacheStick.lx2 - cacheStick.lx1 * cacheStick.ly2;
-
-				boolean ifCrossInfiniteLine = (a * water.lx + b * water.ly + c)
-						* (a * (water.lx + water.vx) + b * (water.ly + water.vy) + c) < 0;
-
-				if (ifCrossInfiniteLine) {
-
-					// cross point between two line;
-					double px = ((cacheStick.lx1 * cacheStick.ly2 - cacheStick.ly1 * cacheStick.lx2) * (-water.vx)
-							- (cacheStick.lx1 - cacheStick.lx2)
-									* (water.lx * (water.ly + water.vy) - water.ly * (water.lx + water.vx)))
-							/ ((cacheStick.lx1 - cacheStick.lx2) * (-water.vy)
-									- (cacheStick.ly1 - cacheStick.ly2) * (-water.vx));
-
-					double py = ((cacheStick.lx1 * cacheStick.ly2 - cacheStick.ly1 * cacheStick.lx2) * (-water.vy)
-							- (cacheStick.ly1 - cacheStick.ly2)
-									* (water.lx * (water.ly + water.vy) - water.ly * (water.lx + water.vx)))
-							/ ((cacheStick.lx1 - cacheStick.lx2) * (-water.vy)
-									- (cacheStick.ly1 - cacheStick.ly2) * (-water.vx));
-					// 실수 오차 해결..
-					double verySmallD = 0.000001;
-					boolean ifCrossLine = ((py <= cacheStick.ly1 + verySmallD && py >= cacheStick.ly2 - verySmallD)
-							|| (py <= cacheStick.ly2 + verySmallD && py >= cacheStick.ly1 - verySmallD))
-							&& ((px <= cacheStick.lx1 + verySmallD && px >= cacheStick.lx2 - verySmallD)
-									|| (px <= cacheStick.lx2 + verySmallD && px >= cacheStick.lx1 - verySmallD));
-
-					if (ifCrossLine) {
-
-						if (collisionStickNum == -1) {
-							collisionStickNum = j;
-							collisionStickX = px;
-							collisionStickY = py;
-						} else {
-							if ((water.lx - collisionStickX) * (water.lx - collisionStickX)
-									+ (water.ly - collisionStickY) * (water.lx - collisionStickY) > (water.lx - px)
-											* (water.lx - px) + (water.ly - py) * (water.lx - py)) {
-								collisionStickNum = j;
-								collisionStickX = px;
-								collisionStickY = py;
-							}
-						}
-					}
-				}
+			if (!water2.ifStatic) {
+				water2.vx += -forceX / water2.mass;
+				water2.vy += -forceY / water2.mass;
 			}
 		}
-		if (collisionStickNum != -1) {
-			Stick cacheStick = sticks.get(collisionStickNum);
-			double a = cacheStick.ly2 - cacheStick.ly1;
-			double b = cacheStick.lx1 - cacheStick.lx2;
+	}
 
-			Double cache = (((water.lx + water.vx) - cacheStick.lx1) * (cacheStick.lx2 - cacheStick.lx1)
-					+ ((water.ly + water.vy) - cacheStick.ly1) * (cacheStick.ly2 - cacheStick.ly1))
-					/ ((cacheStick.lx2 - cacheStick.lx1) * (cacheStick.lx2 - cacheStick.lx1)
-							+ (cacheStick.ly2 - cacheStick.ly1) * (cacheStick.ly2 - cacheStick.ly1));
-
-			// 막대는 정지했다고 가정
-			Double colisionX = cache * (cacheStick.lx2 - cacheStick.lx1) + cacheStick.lx1;
-			Double colisionY = cache * (cacheStick.ly2 - cacheStick.ly1) + cacheStick.ly1;
-
-			Double afterColisionX = 2 * colisionX - (water.lx + water.vx);
-			Double afterColisionY = 2 * colisionY - (water.ly + water.vy);
-
-			// not yet set after v
-			Double beforeSpeed = Math.sqrt(water.vx * water.vx + water.vy * water.vy);
-			Double cacheS = (water.vy * a - water.vx * b) / (a * a + b * b);
-			Double afterSpeedX, afterSpeedY;
-			Double afterSpeed;
-			afterSpeedX = 2 * b * cacheS + water.vx;
-			afterSpeedY = water.vy - 2 * a * cacheS;
-			afterSpeed = Math.sqrt(afterSpeedX * afterSpeedX + afterSpeedY * afterSpeedY);
-			afterSpeedX = -afterSpeedX * beforeSpeed / afterSpeed;
-			afterSpeedY = -afterSpeedY * beforeSpeed / afterSpeed;
-
-			
-			//water.updated = true;
-			water.lx = afterColisionX - afterSpeedX;
-			water.ly = afterColisionY - afterSpeedY;
-			water.vx = afterSpeedX;
-			water.vy = afterSpeedY;
-			
-			
-			if(depth>0) System.out.println(depth);
-			semiWaterStickEngine(water, collisionStickNum, depth+1);
-
+	public void semiWaterStickEngine(Water water, Stick stick) {
+		for (int i = 0; i < stick.water.length; i++) {
+			semiWaterEngine(water, stick.water[i]);
 		}
 	}
 
 	public void waterEngine(int frequency) {
 		for (int n = 0; n < frequency; n++) {
 			// force between two water
-			for (int i = 0; i < waters.size(); i++) {
+			for (int i = 0; i < objects.size(); i++) {
 				// force between two water
-				for (int j = i + 1; j < waters.size(); j++) {
+				for (int j = i + 1; j < objects.size(); j++) {
 
-					Water cw1 = waters.get(i);
-					Water cw2 = waters.get(j);
-					double length = Math.sqrt((cw1.lx - cw2.lx) * (cw1.lx - cw2.lx) + (cw1.ly - cw2.ly) * (cw1.ly - cw2.ly));
-					if (length < 50 && length > 0) {
-						// constant is just...optional??(임의의)
-						double force = 64 / (length * length);
-						if (force > 4) force = 0;
-						double forceX = force * (cw1.lx - cw2.lx) / length;
-						double forceY = force * (cw1.ly - cw2.ly) / length;
+					if (objects.get(i).getClass() == classWater.getClass() && objects.get(j).getClass() == classWater.getClass())
+						semiWaterEngine((Water) objects.get(i), (Water) objects.get(j));
 
-						if(!waters.get(i).ifStatic){
-							waters.get(i).vx += forceX / waters.get(i).mass;
-							waters.get(i).vy += forceY / waters.get(i).mass;
-						}
-						
-						if(!waters.get(j).ifStatic){
-							waters.get(j).vx += -forceX / waters.get(j).mass;
-							waters.get(j).vy += -forceY / waters.get(j).mass;
-						}
-					}
+					if (objects.get(i).getClass() == classWater.getClass() && objects.get(j).getClass() == classStick.getClass())
+						semiWaterStickEngine((Water) objects.get(i), (Stick) objects.get(j));
+
+					if (objects.get(i).getClass() == classStick.getClass() && objects.get(j).getClass() == classWater.getClass())
+						semiWaterStickEngine((Water) objects.get(j), (Stick) objects.get(i));
+
+					if (objects.get(i).getClass() == classStick.getClass() && objects.get(j).getClass() == classStick.getClass())
+						continue;
+
 				}
 			}
-
-			for (int i = 0; i < waters.size(); i++) {
+			
+			for (int i = 0; i < objects.size(); i++) {
 				// visual.
 				// <- red, -> cyan
-				semiWaterStickEngine(waters.get(i), -1, 0);
+				if (objects.get(i).getClass() == classWater.getClass()) {
+					Water cacheWater = (Water) objects.get(i);
+					
+					if (cacheWater.vx < 0)
+						cacheWater.color = Color.red;
+					else
+						cacheWater.color = Color.cyan;
+					
+					//battery
+					if (cacheWater.lx > 900 && cacheWater.lx < 1000 && cacheWater.ly > 375 && cacheWater.ly < 425) cacheWater.vx -= 0.064;
+					
+					cacheWater.update();
+					cacheWater.vx *= 0.988;
+					cacheWater.vy *= 0.988;
+				}
 
-				if (waters.get(i).vx < 0) waters.get(i).color = Color.red;
-				else waters.get(i).color = Color.cyan;
-				
-				waters.get(i).update();
-				waters.get(i).vx *= 0.988;
-				waters.get(i).vy *= 0.988;
 			}
-			
-			
+
 		}
 	}
 
@@ -321,13 +236,13 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 		switch (e.getButton()) {
 		case 1:
-			waters.add(new Water(e.getX(), e.getY(), 0, 0, true, true));
+			objects.add(new Water(e.getX(), e.getY()));
 			break;
 		case 2:
 			System.out.println("try to develop later.. zoom in and out");
 			break;
 		case 3:
-			sticks.add(new Stick(((int) (e.getX() - 25) / 50) * 50 + 25, ((int) e.getY() / 50) * 50 + 25,
+			objects.add(new Stick(((int) (e.getX() - 25) / 50) * 50 + 25, ((int) e.getY() / 50) * 50 + 25,
 					((int) (e.getX() - 25) / 50) * 50 + 75, ((int) e.getY() / 50) * 50 + 25, true));
 			break;
 
@@ -338,24 +253,20 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	@Override
 	public void mousePressed(MouseEvent e) {
 
-
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-
 
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
 
-
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-
 
 	}
 }

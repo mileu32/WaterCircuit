@@ -50,7 +50,6 @@ class Stick {
 			this.water[i] = new Water(lx1 + (lx2 - lx1) * i / (waterCount - 1), ly1 + (ly2 - ly1) * i / (waterCount - 1), true, true);
 		}
 		
-		
 	
 	}
 

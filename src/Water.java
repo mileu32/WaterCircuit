@@ -55,7 +55,7 @@ public class Water {
 		this.ifDraw = ifDraw;
 		
 	}
-
+	
 	public void apply() {
 
 	}
