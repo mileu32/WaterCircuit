@@ -9,6 +9,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -21,11 +24,12 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
-public class WaterCircuitInterface extends JFrame implements ActionListener, MouseListener {
+public class WaterCircuitInterface extends JFrame implements ActionListener, MouseListener, MouseMotionListener, MouseWheelListener {
 	ArrayList<Object> objects;
 	
 	Water classWater = new Water(0,0);
 	Stick classStick = new Stick(0,0,10,10,true);
+	
 	final int update_period = 60;
 	final int max_number = 500;
 
@@ -35,13 +39,19 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	WaterCircuitCanvas canvas;
 	JPanel optionPanel;
+	
+	// 0 : water, 1~8 : circuit
+	final int numMod = 9;
+	int inputMod = 0;
+	
+	int mouseX = 0, mouseY = 0;
 
 	WaterCircuitInterface() {
 
-		super("WaterCircuit v0.1.0b2 (BUILD 16) by mileu");
+		super("WaterCircuit v0.1.0b2 (BUILD 17) by mileu");
 
 		objects = new ArrayList<Object>();
-
+		
 		objects.add(new Stick(75, 275, 1125, 275, true));
 		objects.add(new Stick(75, 325, 1125, 325, true));
 		objects.add(new Stick(75, 375, 1125, 375, true));
@@ -58,6 +68,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 		// for OS X
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
+		
 		// Top Menu
 		setLayout(new GridLayout(1, 3, 5, 5));
 		menuBar = new JMenuBar();
@@ -82,6 +93,8 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 		canvas = new WaterCircuitCanvas();
 		canvas.addMouseListener(this);
+		canvas.addMouseMotionListener(this);
+		canvas.addMouseWheelListener(this);
 		add(canvas);
 		Timer t = new Timer(update_period, this);
 		t.start();
@@ -151,6 +164,16 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 				}
 			}
+			
+			//mouse
+			switch(inputMod){
+			case 0:
+				g.setColor(Color.cyan);
+				g.drawOval(mouseX - 2, mouseY - 2, 4, 4);
+				break;
+			}
+			
+			
 		}
 	}
 
@@ -160,7 +183,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		
 		if (length < 50 && length > 0) {
 			// constant is just...optional??(임의의)
-			double force = 64 / (length * length);
+			double force = 64 * water1.charge * water2.charge / (length * length);
 			if (force > 4)
 				force = 4;
 			double forceX = force * (water1.lx - water2.lx) / length;
@@ -262,11 +285,31 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-
+		
 	}
+	
 
 	@Override
 	public void mouseExited(MouseEvent e) {
 
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		mouseX = e.getX();
+		mouseY = e.getY();
+	}
+	
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		//System.out.println(e.getWheelRotation());
+		inputMod = (inputMod + 10 * numMod + e.getWheelRotation()) % numMod;
+		System.out.println(inputMod);
+		
 	}
 }
