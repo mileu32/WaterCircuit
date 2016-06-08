@@ -26,7 +26,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	ArrayList<Stick> sticks;
 
 	int update_period = 60;
-	int max_number = 800;
+	int max_number = 700;
 
 	JMenuBar menuBar;
 	JMenu fileMenu;
@@ -37,14 +37,11 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	WaterCircuitInterface() {
 
-		super("WaterCircuit v0.1.0b1 (BUILD 13) by mileu");
+		super("WaterCircuit v0.1.0b1 (BUILD 14) by mileu");
 
 		waters = new ArrayList<Water>();
 		sticks = new ArrayList<Stick>();
-
-		// for (int i = 0; i < 1000; i++) waters.add(new Water(50, 362));
-		// for (int i = 0; i < max_number; i++) waters.add(new Water(950, 400));
-
+		
 		sticks.add(new Stick(75, 275, 1125, 275));
 		sticks.add(new Stick(75, 325, 1125, 325));
 		sticks.add(new Stick(75, 375, 1125, 375));
@@ -58,15 +55,11 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		sticks.add(new Stick(25, 375, 75, 425));
 		sticks.add(new Stick(1175, 325, 1125, 275));
 		sticks.add(new Stick(1175, 375, 1125, 425));
-
-		// sticks.add(new Stick(330, 275, 630, 300));
-		// sticks.add(new Stick(630, 275, 630, 300));
-
-		// sticks.add(new Stick(130, 325, 430, 300));
-		// sticks.add(new Stick(430, 325, 430, 300));
-
-		// sticks.add(new Stick(230, 390, 230, 425));
-		// sticks.add(new Stick(230, 390, 930, 425));
+		
+		waters.add(new Water(75, 325, 0, 0, 987654321));
+		waters.add(new Water(75, 375, 0, 0, 987654321));
+		waters.add(new Water(1125, 325, 0, 0, 987654321));
+		waters.add(new Water(1125, 375, 0, 0, 987654321));
 
 		// for OS X
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -118,19 +111,19 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		waterEngine(4);
-		//waterEngine(4);
-		//waterEngine(4);
-		//waterEngine(4);
+
+		waterEngine(16);
+
 		if (waters.size() < max_number)
 			waters.add(new Water(950, 400));
+		
 		for (int i = 0; i < waters.size(); i++) {
-			if (waters.get(i).lx < 0 || waters.get(i).lx > 1300 || waters.get(i).ly < 0 || waters.get(i).ly > 1000) {
+			if (waters.get(i).lx < 0 || waters.get(i).lx > 1200 || waters.get(i).ly < 0 || waters.get(i).ly > 725) {
 				waters.remove(i);
 				System.out.println("removed!");
 			}
 		}
+		
 		canvas.repaint();
 	}
 
@@ -138,7 +131,6 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 		@Override
 		protected void paintComponent(Graphics g) {
-			// TODO Auto-generated method stub
 
 			super.paintComponent(g);
 			Graphics2D g2 = (Graphics2D) g;
@@ -157,7 +149,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 				Water cacheWater = waters.get(i);
 				if (cacheWater.life) {
 					g.setColor(cacheWater.color);
-					g.drawOval((int) cacheWater.lx, (int) cacheWater.ly, (int) cacheWater.size, (int) cacheWater.size);
+					g.drawOval((int) (cacheWater.lx - cacheWater.size/2), (int) (cacheWater.ly - cacheWater.size/2), (int) cacheWater.size, (int) cacheWater.size);
 				}
 			}
 
@@ -171,13 +163,14 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	}
 
-	public void semiWaterStickEngine(Water water, int neglect) {
+	public void semiWaterStickEngine(Water water, int neglect, int depth) {
+		if (depth > 10) return;
+		
 		// battery
 		if (water.lx > 900 && water.lx < 1000 && water.ly > 375 && water.ly < 425) water.vx -= 0.064;
 
 		// force(?) between stick and water
 		int collisionStickNum = -1;
-
 		double collisionStickX = 0, collisionStickY = 0;
 
 		for (int j = 0; j < sticks.size(); j++) {
@@ -206,7 +199,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 							/ ((cacheStick.lx1 - cacheStick.lx2) * (-water.vy)
 									- (cacheStick.ly1 - cacheStick.ly2) * (-water.vx));
 					// 실수 오차 해결..
-					double verySmallD = 0.00001;
+					double verySmallD = 0.000001;
 					boolean ifCrossLine = ((py <= cacheStick.ly1 + verySmallD && py >= cacheStick.ly2 - verySmallD)
 							|| (py <= cacheStick.ly2 + verySmallD && py >= cacheStick.ly1 - verySmallD))
 							&& ((px <= cacheStick.lx1 + verySmallD && px >= cacheStick.lx2 - verySmallD)
@@ -267,14 +260,8 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 			water.vy = afterSpeedY;
 			
 			
-			/*
-			water.lx = afterColisionX - afterSpeedX;
-			water.ly = afterColisionY - afterSpeedY;
-			water.vx = afterSpeedX;
-			water.vy = afterSpeedY;
-			*/
-			
-			semiWaterStickEngine(water, collisionStickNum);
+			if(depth>0) System.out.println(depth);
+			semiWaterStickEngine(water, collisionStickNum, depth+1);
 
 		}
 	}
@@ -310,7 +297,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 			for (int i = 0; i < waters.size(); i++) {
 				// visual.
 				// <- red, -> cyan
-				semiWaterStickEngine(waters.get(i), -1);
+				semiWaterStickEngine(waters.get(i), -1, 0);
 
 				if (waters.get(i).vx < 0) waters.get(i).color = Color.red;
 				else waters.get(i).color = Color.cyan;
@@ -326,7 +313,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
+
 		switch (e.getButton()) {
 		case 1:
 			waters.add(new Water(e.getX(), e.getY(), 0, 0));
@@ -345,25 +332,25 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
+
 
 	}
 }
