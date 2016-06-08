@@ -22,6 +22,7 @@ import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
 public class WaterCircuitInterface extends JFrame implements ActionListener, MouseListener {
+	ArrayList<Object> objects;
 	ArrayList<Water> waters;
 	ArrayList<Stick> sticks;
 
@@ -37,24 +38,26 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	WaterCircuitInterface() {
 
-		super("WaterCircuit v0.1.0b1 (BUILD 14) by mileu");
-
+		super("WaterCircuit v0.1.0b2 (BUILD 15) by mileu");
+		
+		objects = new ArrayList<Object>();
+		
 		waters = new ArrayList<Water>();
 		sticks = new ArrayList<Stick>();
 		
-		sticks.add(new Stick(75, 275, 1125, 275));
-		sticks.add(new Stick(75, 325, 1125, 325));
-		sticks.add(new Stick(75, 375, 1125, 375));
-		sticks.add(new Stick(75, 425, 1125, 425));
-		sticks.add(new Stick(75, 325, 75, 375));
-		sticks.add(new Stick(1125, 325, 1125, 375));
-		sticks.add(new Stick(25, 325, 25, 375));
-		sticks.add(new Stick(1175, 325, 1175, 375));
+		sticks.add(new Stick(75, 275, 1125, 275, true));
+		sticks.add(new Stick(75, 325, 1125, 325, true));
+		sticks.add(new Stick(75, 375, 1125, 375, true));
+		sticks.add(new Stick(75, 425, 1125, 425, true));
+		sticks.add(new Stick(75, 325, 75, 375, true));
+		sticks.add(new Stick(1125, 325, 1125, 375, true));
+		sticks.add(new Stick(25, 325, 25, 375, true));
+		sticks.add(new Stick(1175, 325, 1175, 375, true));
 
-		sticks.add(new Stick(25, 325, 75, 275));
-		sticks.add(new Stick(25, 375, 75, 425));
-		sticks.add(new Stick(1175, 325, 1125, 275));
-		sticks.add(new Stick(1175, 375, 1125, 425));
+		sticks.add(new Stick(25, 325, 75, 275, true));
+		sticks.add(new Stick(25, 375, 75, 425, true));
+		sticks.add(new Stick(1175, 325, 1125, 275, true));
+		sticks.add(new Stick(1175, 375, 1125, 425, true));
 		
 		waters.add(new Water(75, 325, 0, 0, 987654321));
 		waters.add(new Water(75, 375, 0, 0, 987654321));
@@ -147,7 +150,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 			for (int i = 0; i < waters.size(); i++) {
 				Water cacheWater = waters.get(i);
-				if (cacheWater.life) {
+				if (cacheWater.ifDraw) {
 					g.setColor(cacheWater.color);
 					g.drawOval((int) (cacheWater.lx - cacheWater.size/2), (int) (cacheWater.ly - cacheWater.size/2), (int) cacheWater.size, (int) cacheWater.size);
 				}
@@ -268,7 +271,6 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	public void waterEngine(int frequency) {
 		for (int n = 0; n < frequency; n++) {
-
 			// force between two water
 			for (int i = 0; i < waters.size(); i++) {
 				// force between two water
@@ -284,12 +286,15 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 						double forceX = force * (cw1.lx - cw2.lx) / length;
 						double forceY = force * (cw1.ly - cw2.ly) / length;
 
-						waters.get(i).vx += forceX / waters.get(i).mass;
-						waters.get(i).vy += forceY / waters.get(i).mass;
-
-						waters.get(j).vx += -forceX / waters.get(j).mass;
-						waters.get(j).vy += -forceY / waters.get(j).mass;
-
+						if(!waters.get(i).ifStatic){
+							waters.get(i).vx += forceX / waters.get(i).mass;
+							waters.get(i).vy += forceY / waters.get(i).mass;
+						}
+						
+						if(!waters.get(j).ifStatic){
+							waters.get(j).vx += -forceX / waters.get(j).mass;
+							waters.get(j).vy += -forceY / waters.get(j).mass;
+						}
 					}
 				}
 			}
@@ -316,14 +321,14 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 		switch (e.getButton()) {
 		case 1:
-			waters.add(new Water(e.getX(), e.getY(), 0, 0));
+			waters.add(new Water(e.getX(), e.getY(), 0, 0, true, true));
 			break;
 		case 2:
 			System.out.println("try to develop later.. zoom in and out");
 			break;
 		case 3:
 			sticks.add(new Stick(((int) (e.getX() - 25) / 50) * 50 + 25, ((int) e.getY() / 50) * 50 + 25,
-					((int) (e.getX() - 25) / 50) * 50 + 75, ((int) e.getY() / 50) * 50 + 25));
+					((int) (e.getX() - 25) / 50) * 50 + 75, ((int) e.getY() / 50) * 50 + 25, true));
 			break;
 
 		}
