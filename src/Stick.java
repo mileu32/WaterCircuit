@@ -44,12 +44,30 @@ class Stick {
 		if (waterCount == 1)
 			this.water[0] = new Water((lx1 + lx2) / 2, (ly1 + ly2) / 2);
 
-		else
+		else{
 			for (int i = 0; i < water.length; i++)
 				this.water[i] = new Water(lx1 + (lx2 - lx1) * i / (waterCount - 1), ly1 + (ly2 - ly1) * i / (waterCount - 1), true, true);
-
+			this.water[0].charge = 0.9;
+			this.water[water.length - 1].charge = 0.9;
+		}
 	}
 
+	public void move(double x, double y) {
+		this.lx1 += x;
+		this.lx2 += x;
+		this.ly1 += y;
+		this.ly2 += y;
+		for(int i = 0; i < this.water.length; i++){
+			this.water[i].lx += x;
+			this.water[i].ly += y;
+		}
+	}
+	
+	public void spin(double theta) {
+		
+		
+	}
+	
 	public void update() {
 
 	}

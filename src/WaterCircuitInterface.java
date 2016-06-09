@@ -31,7 +31,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	Stick classStick = new Stick(0,0,10,10,true);
 	
 	final int update_period = 60;
-	final int max_number = 500;
+	final int max_number = 400;
 
 	JMenuBar menuBar;
 	JMenu fileMenu;
@@ -44,11 +44,13 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	final int numMod = 9;
 	int inputMod = 0;
 	
+	int frame = 0;
+	
 	int mouseX = 0, mouseY = 0;
 
 	WaterCircuitInterface() {
 
-		super("WaterCircuit v0.1.0b2 (BUILD 17) by mileu");
+		super("WaterCircuit v0.1.0b2 (BUILD 18) by mileu");
 
 		objects = new ArrayList<Object>();
 		
@@ -61,11 +63,18 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		objects.add(new Stick(25, 325, 25, 375, true));
 		objects.add(new Stick(1175, 325, 1175, 375, true));
 
-		objects.add(new Stick(25, 325, 75, 275, true));
-		objects.add(new Stick(25, 375, 75, 425, true));
-		objects.add(new Stick(1175, 325, 1125, 275, true));
-		objects.add(new Stick(1175, 375, 1125, 425, true));
-
+		objects.add(new Stick(25, 325, 75 - 50 / Math.sqrt(2), 325 - 50 / Math.sqrt(2), true));
+		objects.add(new Stick(75 - 50 / Math.sqrt(2), 325 - 50 / Math.sqrt(2), 75, 275, true));
+		
+		objects.add(new Stick(25, 375, 75 - 50 / Math.sqrt(2), 375 + 50 / Math.sqrt(2), true));
+		objects.add(new Stick(75 - 50 / Math.sqrt(2), 375 + 50 / Math.sqrt(2), 75, 425, true));
+		
+		objects.add(new Stick(1175, 325, 1125 + 50 / Math.sqrt(2), 325 - 50 / Math.sqrt(2), true));
+		objects.add(new Stick(1125 + 50 / Math.sqrt(2), 325 - 50 / Math.sqrt(2), 1125, 275, true));
+		
+		objects.add(new Stick(1175, 375, 1125 + 50 / Math.sqrt(2), 375 + 50 / Math.sqrt(2), true));
+		objects.add(new Stick(1125 + 50 / Math.sqrt(2), 375 + 50 / Math.sqrt(2), 1125, 425, true));
+		
 		// for OS X
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		
@@ -119,10 +128,12 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-
+		
 		waterEngine(16);
 
-		if (objects.size() < max_number)
+		frame++;
+		frame = frame % 4;
+		if (frame == 0 && objects.size() < max_number)
 			objects.add(new Water(950, 400));
 
 		canvas.repaint();
@@ -166,11 +177,107 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 			}
 			
 			//mouse
+			
 			switch(inputMod){
 			case 0:
 				g.setColor(Color.cyan);
+				g.drawString("  mode : water", mouseX, mouseY);
+				
+				g.setColor(Color.cyan);
 				g.drawOval(mouseX - 2, mouseY - 2, 4, 4);
+				
 				break;
+				
+			case 1:
+				g.setColor(Color.cyan);
+				g.drawString("  mode : vertical circuit", mouseX, mouseY);
+				
+				g.setColor(Color.orange);
+				g.drawLine(((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 25, ((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 75);
+				g.drawLine(((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 25, ((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 75);
+				
+				g.setColor(Color.cyan);
+				for(int i = 0; i < 4; i++)
+					for(int j = 0; j < 3; j++)
+						g.drawOval(((mouseX - 25) / 50) * 50 + 40 + 10 * j - 2 , ((mouseY - 25) / 50) * 50 + 35 + 10 * i - 2, 4, 4);
+				
+				break;
+			
+			case 2:
+				g.setColor(Color.cyan);
+				g.drawString("  mode : horizonal circuit", mouseX, mouseY);
+				
+				g.setColor(Color.orange);
+				g.drawLine(((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 25, ((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 25);
+				g.drawLine(((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 75, ((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 75);
+				
+				g.setColor(Color.cyan);
+				for(int i = 0; i < 3; i++)
+					for(int j = 0; j < 4; j++)
+						g.drawOval(((mouseX + 25) / 50) * 50 - 15 + 10 * j - 2 , ((mouseY - 25) / 50) * 50 + 40 + 10 * i - 2, 4, 4);
+				
+				break;
+				
+			case 3:
+				g.setColor(Color.cyan);
+				g.drawString("  mode : curved circuit 1", mouseX, mouseY);
+				
+				g.setColor(Color.orange);
+				g.drawLine(((mouseX - 25) / 50) * 50 + 25 + (int) (50 / Math.sqrt(2)), ((mouseY - 25) / 50) * 50 + 75 - (int) (50 / Math.sqrt(2)), ((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 25);
+				g.drawLine(((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 75, ((mouseX - 25) / 50) * 50 + 25 + (int) (50 / Math.sqrt(2)), ((mouseY - 25) / 50) * 50 + 75 - (int) (50 / Math.sqrt(2)));
+				
+				g.setColor(Color.cyan);
+				for(int i = 0; i < 3; i++)
+					for(int j = 0; j < 3; j++)
+						g.drawOval(((mouseX - 25) / 50) * 50 + 30 + 10 * j - 2 , ((mouseY - 25) / 50) * 50 + 70 - 10 * i - 2, 4, 4);
+				
+				break;
+				
+			case 4:
+				g.setColor(Color.cyan);
+				g.drawString("  mode : curved circuit 2", mouseX, mouseY);
+				
+				g.setColor(Color.orange);
+				g.drawLine(((mouseX - 25) / 50) * 50 + 25 + (int) (50 / Math.sqrt(2)), ((mouseY - 25) / 50) * 50 + 25 + (int) (50 / Math.sqrt(2)), ((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 25);
+				g.drawLine(((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 75, ((mouseX - 25) / 50) * 50 + 25 + (int) (50 / Math.sqrt(2)), ((mouseY - 25) / 50) * 50 + 25 + (int) (50 / Math.sqrt(2)));
+				
+				g.setColor(Color.cyan);
+				for(int i = 0; i < 3; i++)
+					for(int j = 0; j < 3; j++)
+						g.drawOval(((mouseX - 25) / 50) * 50 + 30 + 10 * j - 2 , ((mouseY - 25) / 50) * 50 + 30 + 10 * i - 2, 4, 4);
+				
+				break;
+				
+			case 5:
+				g.setColor(Color.cyan);
+				g.drawString("  mode : curved circuit 3", mouseX, mouseY);
+				
+				g.setColor(Color.orange);
+				g.drawLine(((mouseX - 25) / 50) * 50 + 75 - (int) (50 / Math.sqrt(2)), ((mouseY - 25) / 50) * 50 + 25 + (int) (50 / Math.sqrt(2)), ((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 25);
+				g.drawLine(((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 75, ((mouseX - 25) / 50) * 50 + 75 - (int) (50 / Math.sqrt(2)), ((mouseY - 25) / 50) * 50 + 25 + (int) (50 / Math.sqrt(2)));
+				
+				g.setColor(Color.cyan);
+				for(int i = 0; i < 3; i++)
+					for(int j = 0; j < 3; j++)
+						g.drawOval(((mouseX - 25) / 50) * 50 + 70 - 10 * j - 2 , ((mouseY - 25) / 50) * 50 + 30 + 10 * i - 2, 4, 4);
+				
+				break;
+				
+			case 6:
+				g.setColor(Color.cyan);
+				g.drawString("  mode : curved circuit 4", mouseX, mouseY);
+				
+				g.setColor(Color.orange);
+				g.drawLine(((mouseX - 25) / 50) * 50 + 75 - (int) (50 / Math.sqrt(2)), ((mouseY - 25) / 50) * 50 + 75 - (int) (50 / Math.sqrt(2)), ((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 25);
+				g.drawLine(((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 75, ((mouseX - 25) / 50) * 50 + 75 - (int) (50 / Math.sqrt(2)), ((mouseY - 25) / 50) * 50 + 75 - (int) (50 / Math.sqrt(2)));
+				
+				g.setColor(Color.cyan);
+				for(int i = 0; i < 3; i++)
+					for(int j = 0; j < 3; j++)
+						g.drawOval(((mouseX - 25) / 50) * 50 + 70 - 10 * j - 2 , ((mouseY - 25) / 50) * 50 + 70 - 10 * i - 2, 4, 4);
+				
+				break;
+				
 			}
 			
 			
@@ -183,9 +290,9 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		
 		if (length < 50 && length > 0) {
 			// constant is just...optional??(임의의)
-			double force = 64 * water1.charge * water2.charge / (length * length);
-			if (force > 4)
-				force = 4;
+			double force = 512 * water1.charge * water2.charge / (length * length);
+			if (inputMod!=1 && force > 32)
+				force = 32;
 			double forceX = force * (water1.lx - water2.lx) / length;
 			double forceY = force * (water1.ly - water2.ly) / length;
 
@@ -242,11 +349,12 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 						cacheWater.color = Color.cyan;
 					
 					//battery
-					if (cacheWater.lx > 900 && cacheWater.lx < 1000 && cacheWater.ly > 375 && cacheWater.ly < 425) cacheWater.vx -= 0.064;
+					if(inputMod%2==1)
+						if (cacheWater.lx > 900 && cacheWater.lx < 1000 && cacheWater.ly > 375 && cacheWater.ly < 425) cacheWater.vx -= 0.1;
 					
 					cacheWater.update();
-					cacheWater.vx *= 0.988;
-					cacheWater.vy *= 0.988;
+					cacheWater.vx *= 0.994;
+					cacheWater.vy *= 0.994;
 				}
 
 			}
@@ -259,7 +367,8 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 		switch (e.getButton()) {
 		case 1:
-			objects.add(new Water(e.getX(), e.getY()));
+			if(inputMod == 0) objects.add(new Water(e.getX(), e.getY()));
+			Circuit.createCircuit(inputMod, e.getX(), e.getY(), objects);
 			break;
 		case 2:
 			System.out.println("try to develop later.. zoom in and out");
@@ -307,9 +416,6 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		//System.out.println(e.getWheelRotation());
 		inputMod = (inputMod + 10 * numMod + e.getWheelRotation()) % numMod;
-		System.out.println(inputMod);
-		
 	}
 }
