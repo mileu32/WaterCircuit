@@ -7,6 +7,7 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -24,7 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 
-public class WaterCircuitInterface extends JFrame implements ActionListener, MouseListener, MouseMotionListener, MouseWheelListener {
+public class WaterCircuitInterface extends JFrame implements ActionListener, MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
 	ArrayList<Object> objects;
 	
 	Water classWater = new Water(0,0);
@@ -44,13 +45,15 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	final int numMod = 9;
 	int inputMod = 0;
 	
+	boolean ifPaused = true;
+	
 	int frame = 0;
 	
 	int mouseX = 0, mouseY = 0;
 
 	WaterCircuitInterface() {
 
-		super("WaterCircuit v0.1.0b2 (BUILD 18) by mileu");
+		super("WaterCircuit v0.1.0b2 (BUILD 19) by mileu");
 
 		objects = new ArrayList<Object>();
 		
@@ -104,6 +107,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		canvas.addMouseListener(this);
 		canvas.addMouseMotionListener(this);
 		canvas.addMouseWheelListener(this);
+		addKeyListener(this);
 		add(canvas);
 		Timer t = new Timer(update_period, this);
 		t.start();
@@ -128,14 +132,14 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
-		waterEngine(16);
+		if(!ifPaused){
+			waterEngine(16);
 
-		frame++;
-		frame = frame % 4;
-		if (frame == 0 && objects.size() < max_number)
+			frame++;
+			frame = frame % 4;
+			if (frame == 0 && objects.size() < max_number)
 			objects.add(new Water(950, 400));
-
+		}
 		canvas.repaint();
 	}
 
@@ -277,9 +281,8 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 						g.drawOval(((mouseX - 25) / 50) * 50 + 70 - 10 * j - 2 , ((mouseY - 25) / 50) * 50 + 70 - 10 * i - 2, 4, 4);
 				
 				break;
-				
 			}
-			
+			if(ifPaused) g.drawString("Paused", 10, 15);
 			
 		}
 	}
@@ -290,9 +293,9 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		
 		if (length < 50 && length > 0) {
 			// constant is just...optional??(임의의)
-			double force = 512 * water1.charge * water2.charge / (length * length);
-			if (inputMod!=1 && force > 32)
-				force = 32;
+			double force = 64 * water1.charge * water2.charge / (length * length);
+			if (force > 64)
+				force = 64;
 			double forceX = force * (water1.lx - water2.lx) / length;
 			double forceY = force * (water1.ly - water2.ly) / length;
 
@@ -353,8 +356,8 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 						if (cacheWater.lx > 900 && cacheWater.lx < 1000 && cacheWater.ly > 375 && cacheWater.ly < 425) cacheWater.vx -= 0.1;
 					
 					cacheWater.update();
-					cacheWater.vx *= 0.994;
-					cacheWater.vy *= 0.994;
+					cacheWater.vx *= 0.988;
+					cacheWater.vy *= 0.988;
 				}
 
 			}
@@ -381,7 +384,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		}
 
 	}
-
+	
 	@Override
 	public void mousePressed(MouseEvent e) {
 
@@ -418,4 +421,25 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		inputMod = (inputMod + 10 * numMod + e.getWheelRotation()) % numMod;
 	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		if(e.getKeyCode() == KeyEvent.VK_P){
+			   ifPaused = !ifPaused;
+			   System.out.println("paused");
+		   }
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 }
