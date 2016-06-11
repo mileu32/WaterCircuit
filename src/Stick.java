@@ -36,7 +36,7 @@ class Stick {
 
 		double length = Math.sqrt((lx2 - lx1) * (lx2 - lx1) + (ly2 - ly1) * (ly2 - ly1));
 
-		int waterCount = (int) (length + 9) / 10;
+		int waterCount = (int) (length - 0.1) / 10 + 1;
 
 		this.water = new Water[waterCount];
 
@@ -46,7 +46,7 @@ class Stick {
 
 		else{
 			for (int i = 0; i < water.length; i++)
-				this.water[i] = new Water(lx1 + (lx2 - lx1) * i / (waterCount - 1), ly1 + (ly2 - ly1) * i / (waterCount - 1), true, true);
+				this.water[i] = new Water(lx1 + (lx2 - lx1) * i / (waterCount - 1), ly1 + (ly2 - ly1) * i / (waterCount - 1), 0, 0, 2, true, true);
 			this.water[0].charge = 0.9;
 			this.water[water.length - 1].charge = 0.9;
 		}
@@ -63,9 +63,44 @@ class Stick {
 		}
 	}
 	
+	
+	//clockwise
 	public void spin(double theta) {
+
+		double[] pointCache;
+		double middlePointX = (this.lx1 + this.lx2) / 2;
+		double middlePointY = (this.ly1 + this.ly2) / 2;
 		
+		pointCache = spinPoint(this.lx1, this.ly1, middlePointX, middlePointY, theta);
+		this.lx1 = pointCache[0];
+		this.ly1 = pointCache[1];
 		
+		pointCache = spinPoint(this.lx2, this.ly2, middlePointX, middlePointY, theta);
+		this.lx2 = pointCache[0];
+		this.ly2 = pointCache[1];
+		
+		for(int i = 0; i < this.water.length; i++){
+			pointCache = spinPoint(this.water[i].lx, this.water[i].ly, middlePointX, middlePointY, theta);
+			this.water[i].lx = pointCache[0];
+			this.water[i].ly = pointCache[1];
+		}
+		
+	}
+	
+	public double[] spinPoint(double pointX, double pointY, double middlePointX, double middlePointY, double theta){
+
+		double returnDouble[];
+		returnDouble = new double[2];
+		
+		double cacheTheta = Math.atan2(pointY - middlePointY, pointX - middlePointX);
+		double length = Math.sqrt((pointX - middlePointX) * (pointX - middlePointX) + (pointY - middlePointY) * (pointY - middlePointY));
+		pointX = length * Math.cos(cacheTheta + theta);
+		pointY = length * Math.sin(cacheTheta + theta);
+		
+		returnDouble[0] = pointX + middlePointX;
+		returnDouble[1] = pointY + middlePointY;
+		
+		return returnDouble;
 	}
 	
 	public void update() {

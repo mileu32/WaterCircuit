@@ -45,6 +45,11 @@ public class Water {
 
 	}
 
+	Water(double locaionX, double locationY, double velocityX, double velocityY, double charge, boolean ifStatic, boolean ifDraw) {
+		this(locaionX, locationY, velocityX, velocityY, 5, charge, 4, Color.CYAN, ifStatic, ifDraw);
+
+	}
+	
 	Water(double locaionX, double locationY, double velocityX, double velocityY, double charge) {
 		this(locaionX, locationY, velocityX, velocityY, 5, charge, 4, Color.CYAN, false, true);
 

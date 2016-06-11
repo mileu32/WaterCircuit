@@ -32,7 +32,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	Stick classStick = new Stick(0,0,10,10,true);
 	
 	final int update_period = 60;
-	final int max_number = 400;
+	final int max_number = 500;
 
 	JMenuBar menuBar;
 	JMenu fileMenu;
@@ -42,7 +42,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	JPanel optionPanel;
 	
 	// 0 : water, 1~8 : circuit
-	final int numMod = 9;
+	final int numMod = 7;
 	int inputMod = 0;
 	
 	boolean ifPaused = true;
@@ -53,10 +53,12 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	WaterCircuitInterface() {
 
-		super("WaterCircuit v0.1.0b2 (BUILD 19) by mileu");
+		super("WaterCircuit v0.1.0b2 (BUILD 20) by mileu");
 
 		objects = new ArrayList<Object>();
 		
+		objects.add(new Stick(1000, 325, 1000, 425, true));
+		objects.add(new Stick(950, 375, 1050, 375, true));
 		objects.add(new Stick(75, 275, 1125, 275, true));
 		objects.add(new Stick(75, 325, 1125, 325, true));
 		objects.add(new Stick(75, 375, 1125, 375, true));
@@ -133,7 +135,8 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(!ifPaused){
-			waterEngine(16);
+			
+			waterEngine(128);
 
 			frame++;
 			frame = frame % 4;
@@ -293,9 +296,9 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		
 		if (length < 50 && length > 0) {
 			// constant is just...optional??(임의의)
-			double force = 64 * water1.charge * water2.charge / (length * length);
-			if (force > 64)
-				force = 64;
+			double force = 16 * water1.charge * water2.charge / (length * length);
+			if (force > 16)
+				force = 16;
 			double forceX = force * (water1.lx - water2.lx) / length;
 			double forceY = force * (water1.ly - water2.ly) / length;
 
@@ -320,6 +323,8 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	public void waterEngine(int frequency) {
 		for (int n = 0; n < frequency; n++) {
+			((Stick) objects.get(0)).spin(0.01745/8);
+			((Stick) objects.get(1)).spin(0.01745/8);
 			// force between two water
 			for (int i = 0; i < objects.size(); i++) {
 				// force between two water
@@ -351,10 +356,6 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 					else
 						cacheWater.color = Color.cyan;
 					
-					//battery
-					if(inputMod%2==1)
-						if (cacheWater.lx > 900 && cacheWater.lx < 1000 && cacheWater.ly > 375 && cacheWater.ly < 425) cacheWater.vx -= 0.1;
-					
 					cacheWater.update();
 					cacheWater.vx *= 0.988;
 					cacheWater.vy *= 0.988;
@@ -367,7 +368,8 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-
+		System.out.println(Math.atan2(1,Math.sqrt(3))/3.1415926535*180);
+		System.out.println("mouseClicked");
 		switch (e.getButton()) {
 		case 1:
 			if(inputMod == 0) objects.add(new Water(e.getX(), e.getY()));
