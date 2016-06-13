@@ -36,7 +36,7 @@ class Stick {
 
 		double length = Math.sqrt((lx2 - lx1) * (lx2 - lx1) + (ly2 - ly1) * (ly2 - ly1));
 
-		int waterCount = (int) (length - 0.1) / 10 + 1;
+		int waterCount = (int) (length - 0.1) / 5 + 1;
 
 		this.water = new Water[waterCount];
 

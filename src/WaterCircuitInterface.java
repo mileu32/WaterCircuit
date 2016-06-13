@@ -32,7 +32,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	Stick classStick = new Stick(0,0,10,10,true);
 	
 	final int update_period = 60;
-	final int max_number = 500;
+	final int max_number = 1000;
 
 	JMenuBar menuBar;
 	JMenu fileMenu;
@@ -53,7 +53,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	WaterCircuitInterface() {
 
-		super("WaterCircuit v0.1.0b2 (BUILD 20) by mileu");
+		super("WaterCircuit v0.1.0b3 (BUILD 21) by mileu");
 
 		objects = new ArrayList<Object>();
 		
@@ -136,7 +136,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	public void actionPerformed(ActionEvent e) {
 		if(!ifPaused){
 			
-			waterEngine(128);
+			waterEngine(16);
 
 			frame++;
 			frame = frame % 4;
@@ -296,9 +296,9 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		
 		if (length < 50 && length > 0) {
 			// constant is just...optional??(임의의)
-			double force = 16 * water1.charge * water2.charge / (length * length);
-			if (force > 16)
-				force = 16;
+			double force = 4 * water1.charge * water2.charge / (length * length);
+			if (force > 4)
+				force = 4;
 			double forceX = force * (water1.lx - water2.lx) / length;
 			double forceY = force * (water1.ly - water2.ly) / length;
 
@@ -320,14 +320,19 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 			semiWaterEngine(water, stick.water[i]);
 		}
 	}
+	
+	class ThreadEngine extends Thread {
+		int start, end;
 
-	public void waterEngine(int frequency) {
-		for (int n = 0; n < frequency; n++) {
-			((Stick) objects.get(0)).spin(0.01745/8);
-			((Stick) objects.get(1)).spin(0.01745/8);
-			// force between two water
-			for (int i = 0; i < objects.size(); i++) {
-				// force between two water
+		public ThreadEngine(int start, int end) {
+			//System.out.println(start + "에서부터 "+ end + "까지 연산하는 스레드가 생성되었습니다.");
+			this.start = start;
+			this.end = end;
+		}
+		
+		public void run() {
+			//System.out.println("연산이 시작됩니다.");
+			for(int i = start; i < end; i++){
 				for (int j = i + 1; j < objects.size(); j++) {
 
 					if (objects.get(i).getClass() == classWater.getClass() && objects.get(j).getClass() == classWater.getClass())
@@ -344,6 +349,40 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 				}
 			}
+			//System.out.println("연산이 완료되었습니다.");
+
+		}
+	}
+	public void waterEngine(int frequency) {
+		for (int n = 0; n < frequency; n++) {
+			((Stick) objects.get(0)).spin(0.01745/8);
+			((Stick) objects.get(1)).spin(0.01745/8);
+			// force between two water
+			int thread0 = 0;
+			int thread1 = (int) (0.1339 * objects.size());
+			int thread2 = (int) (0.2928 * objects.size());
+			int thread3 = (int) (0.5 * objects.size());
+			int thread4 = objects.size();
+			
+			ThreadEngine te1 = new ThreadEngine(thread0, thread1);
+			ThreadEngine te2 = new ThreadEngine(thread1, thread2);
+			ThreadEngine te3 = new ThreadEngine(thread2, thread3);
+			ThreadEngine te4 = new ThreadEngine(thread3, thread4);
+			
+			te1.start();
+			te2.start();
+			te3.start();
+			te4.start();
+			
+			try {
+				te1.join();
+				te2.join();
+				te3.join();
+				te4.join();
+			} catch (Exception e) {
+				e.printStackTrace(); 
+			}
+			//System.out.println("calculation finished!");
 			
 			for (int i = 0; i < objects.size(); i++) {
 				// visual.
