@@ -32,7 +32,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	Stick classStick = new Stick(0,0,10,10);
 	
 	final int update_period = 60;
-	final int max_number = 1000;
+	final int max_number = 000;
 
 	JMenuBar menuBar;
 	JMenu fileMenu;
@@ -53,9 +53,12 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	WaterCircuitInterface() {
 
-		super("WaterCircuit v0.2.0b1 (BUILD 22) by mileu");
+		super("WaterCircuit v0.2.0b1 (BUILD 23) by mileu");
 
 		objects = new ArrayList<Object>();
+		
+		objects.add(new Stick(600, 325, 600, 425, false));
+		
 		
 		objects.add(new Stick(1000, 325, 1000, 425, 0.014));
 		objects.add(new Stick(950, 375, 1050, 375, 0.014));

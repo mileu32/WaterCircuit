@@ -27,7 +27,7 @@ class Stick {
 	}
 	
 	Stick(double locationX1, double locationY1, double locationX2, double locationY2, double rotateTheta) {
-		this(locationX1, locationY1, locationX2, locationY2, 0, 5, rotateTheta, Color.ORANGE, false);
+		this(locationX1, locationY1, locationX2, locationY2, 0, 5, rotateTheta, Color.ORANGE, true);
 	}
 
 	Stick(double locationX1, double locationY1, double locationX2, double locationY2, double mass, double size, double rotateTheta,
@@ -125,15 +125,20 @@ class Stick {
 				double pointY = cacheWater.ly - middlePointY;
 				
 				double velocityTheta = Math.atan2(cacheWater.vy, cacheWater.vx);
-				double stickTheta = Math.atan2(this.ly1 - this.ly2, this.lx1 - this.lx2);
-				
+				double stickTheta =  Math.atan2(pointY, pointX);
+								
 				double force = Math.sqrt(cacheWater.vx * cacheWater.vx + cacheWater.vy * cacheWater.vy) * Math.cos(velocityTheta - stickTheta - Math.PI/2);
 				
+				rotateTheta += 0.05 * force * Math.sqrt(pointX * pointX + pointY * pointY) / ((this.lx1 - this.lx2) * (this.lx1 - this.lx2) + (this.ly1 - this.ly2) * (this.ly1 - this.ly2));
+				
+				cacheWater.vx = 0;
+				cacheWater.vy = 0;
 				
 			}
 		
-			spin(rotateTheta);
 		}
+		
+		if(rotateTheta!=0) spin(rotateTheta);
 	}
 
 	public double check(int mouseX, int mouseY) {
