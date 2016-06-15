@@ -7,8 +7,8 @@ public class Circuit {
 		
 		switch(mode){
 		case 1:
-			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 25, ((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 75, true));
-			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 25, ((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 75, true));
+			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 25, ((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 75));
+			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 25, ((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 75));
 			
 			for(int i = 0; i < 4; i++)
 				for(int j = 0; j < 3; j++)
@@ -17,8 +17,8 @@ public class Circuit {
 			break;
 			
 		case 2:
-			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 25, ((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 25, true));
-			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 75, ((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 75, true));
+			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 25, ((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 25));
+			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 75, ((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 75));
 			
 			for(int i = 0; i < 3; i++)
 				for(int j = 0; j < 4; j++)
@@ -27,8 +27,8 @@ public class Circuit {
 			break;
 			
 		case 3:
-			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 25 + 50 / Math.sqrt(2), ((mouseY - 25) / 50) * 50 + 75 - 50 / Math.sqrt(2), ((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 25, true));
-			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 75, ((mouseX - 25) / 50) * 50 + 25 + 50 / Math.sqrt(2), ((mouseY - 25) / 50) * 50 + 75 - 50 / Math.sqrt(2), true));
+			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 25 + 50 / Math.sqrt(2), ((mouseY - 25) / 50) * 50 + 75 - 50 / Math.sqrt(2), ((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 25));
+			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 75, ((mouseX - 25) / 50) * 50 + 25 + 50 / Math.sqrt(2), ((mouseY - 25) / 50) * 50 + 75 - 50 / Math.sqrt(2)));
 			
 			for(int i = 0; i < 3; i++)
 				for(int j = 0; j < 3; j++)
@@ -37,8 +37,8 @@ public class Circuit {
 			break;
 			
 		case 4:
-			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 25 + 50 / Math.sqrt(2), ((mouseY - 25) / 50) * 50 + 25 + 50 / Math.sqrt(2), ((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 25, true));
-			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 75, ((mouseX - 25) / 50) * 50 + 25 + 50 / Math.sqrt(2), ((mouseY - 25) / 50) * 50 + 25 + 50 / Math.sqrt(2), true));
+			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 25 + 50 / Math.sqrt(2), ((mouseY - 25) / 50) * 50 + 25 + 50 / Math.sqrt(2), ((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 25));
+			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 75, ((mouseX - 25) / 50) * 50 + 25 + 50 / Math.sqrt(2), ((mouseY - 25) / 50) * 50 + 25 + 50 / Math.sqrt(2)));
 			
 			for(int i = 0; i < 3; i++)
 				for(int j = 0; j < 3; j++)
@@ -47,8 +47,8 @@ public class Circuit {
 			break;
 			
 		case 5:
-			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 75 - 50 / Math.sqrt(2), ((mouseY - 25) / 50) * 50 + 25 + 50 / Math.sqrt(2), ((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 25, true));
-			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 75, ((mouseX - 25) / 50) * 50 + 75 - 50 / Math.sqrt(2), ((mouseY - 25) / 50) * 50 + 25 + 50 / Math.sqrt(2), true));
+			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 75 - 50 / Math.sqrt(2), ((mouseY - 25) / 50) * 50 + 25 + 50 / Math.sqrt(2), ((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 25));
+			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 75, ((mouseX - 25) / 50) * 50 + 75 - 50 / Math.sqrt(2), ((mouseY - 25) / 50) * 50 + 25 + 50 / Math.sqrt(2)));
 			
 			for(int i = 0; i < 3; i++)
 				for(int j = 0; j < 3; j++)
@@ -57,15 +57,21 @@ public class Circuit {
 			break;
 			
 		case 6:
-			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 75 - 50 / Math.sqrt(2), ((mouseY - 25) / 50) * 50 + 75 - 50 / Math.sqrt(2), ((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 25, true));
-			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 75, ((mouseX - 25) / 50) * 50 + 75 - 50 / Math.sqrt(2), ((mouseY - 25) / 50) * 50 + 75 - 50 / Math.sqrt(2), true));
+			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 75 - 50 / Math.sqrt(2), ((mouseY - 25) / 50) * 50 + 75 - 50 / Math.sqrt(2), ((mouseX - 25) / 50) * 50 + 75, ((mouseY - 25) / 50) * 50 + 25));
+			objects.add(new Stick(((mouseX - 25) / 50) * 50 + 25, ((mouseY - 25) / 50) * 50 + 75, ((mouseX - 25) / 50) * 50 + 75 - 50 / Math.sqrt(2), ((mouseY - 25) / 50) * 50 + 75 - 50 / Math.sqrt(2)));
 			
 			for(int i = 0; i < 3; i++)
 				for(int j = 0; j < 3; j++)
 					objects.add(new Water(((mouseX - 25) / 50) * 50 + 70 - 10 * j, ((mouseY - 25) / 50) * 50 + 70 - 10 * i, 0, 0));
 			
 			break;
-				
+		
+		case 7:
+			objects.add(new Stick(((int) (mouseX - 25) / 50) * 50, ((int) mouseY / 50) * 50 + 25,
+					((int) (mouseX - 25) / 50) * 50 + 100, ((int) mouseY / 50) * 50 + 25, 0.014));
+			objects.add(new Stick(((int) (mouseX - 25) / 50) * 50 + 50, ((int) mouseY / 50) * 50 - 25,
+							((int) (mouseX - 25) / 50) * 50 + 50, ((int) mouseY / 50) * 50 + 75, 0.014));
+			break;
 		}
 		
 	}

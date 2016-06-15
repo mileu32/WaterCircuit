@@ -11,16 +11,26 @@ class Stick {
 	double vx, vy; // velocity x, velocity y
 	double mass;
 	double size;
+	
+	double rotateTheta;
 
 	Water water[];
 
 	Color color;
 
+	Stick(double locationX1, double locationY1, double locationX2, double locationY2) {
+		this(locationX1, locationY1, locationX2, locationY2, 0, 5, 0, Color.ORANGE, true);
+	}
+	
 	Stick(double locationX1, double locationY1, double locationX2, double locationY2, boolean ifStatic) {
-		this(locationX1, locationY1, locationX2, locationY2, 0, 5, Color.ORANGE, ifStatic);
+		this(locationX1, locationY1, locationX2, locationY2, 0, 5, 0, Color.ORANGE, ifStatic);
+	}
+	
+	Stick(double locationX1, double locationY1, double locationX2, double locationY2, double rotateTheta) {
+		this(locationX1, locationY1, locationX2, locationY2, 0, 5, rotateTheta, Color.ORANGE, false);
 	}
 
-	Stick(double locationX1, double locationY1, double locationX2, double locationY2, double mass, double size,
+	Stick(double locationX1, double locationY1, double locationX2, double locationY2, double mass, double size, double rotateTheta,
 			Color color, boolean ifStatic) {
 
 		this.lx1 = locationX1;
@@ -30,6 +40,7 @@ class Stick {
 
 		this.mass = mass;
 		this.size = size;
+		this.rotateTheta = rotateTheta;
 		this.color = color;
 
 		this.ifStatic = ifStatic;
@@ -104,7 +115,25 @@ class Stick {
 	}
 	
 	public void update() {
-
+		if(!ifStatic){
+			double middlePointX = (this.lx1 + this.lx2) / 2;
+			double middlePointY = (this.ly1 + this.ly2) / 2;
+			
+			for(int i = 0; i < this.water.length; i++){
+				Water cacheWater = this.water[i];
+				double pointX = cacheWater.lx - middlePointX;
+				double pointY = cacheWater.ly - middlePointY;
+				
+				double velocityTheta = Math.atan2(cacheWater.vy, cacheWater.vx);
+				double stickTheta = Math.atan2(this.ly1 - this.ly2, this.lx1 - this.lx2);
+				
+				double force = Math.sqrt(cacheWater.vx * cacheWater.vx + cacheWater.vy * cacheWater.vy) * Math.cos(velocityTheta - stickTheta - Math.PI/2);
+				
+				
+			}
+		
+			spin(rotateTheta);
+		}
 	}
 
 	public double check(int mouseX, int mouseY) {

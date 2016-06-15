@@ -79,7 +79,7 @@ public class Water {
 	}
 
 	public void update() {
-		if (!updated) {
+		if (!updated && ! ifStatic) {
 			lx += vx;
 			ly += vy;
 		}

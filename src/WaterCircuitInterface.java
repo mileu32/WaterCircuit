@@ -29,7 +29,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	ArrayList<Object> objects;
 	
 	Water classWater = new Water(0,0);
-	Stick classStick = new Stick(0,0,10,10,true);
+	Stick classStick = new Stick(0,0,10,10);
 	
 	final int update_period = 60;
 	final int max_number = 1000;
@@ -42,7 +42,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	JPanel optionPanel;
 	
 	// 0 : water, 1~8 : circuit
-	final int numMod = 7;
+	final int numMod = 8;
 	int inputMod = 0;
 	
 	boolean ifPaused = true;
@@ -53,32 +53,34 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	WaterCircuitInterface() {
 
-		super("WaterCircuit v0.1.0b3 (BUILD 21) by mileu");
+		super("WaterCircuit v0.2.0b1 (BUILD 22) by mileu");
 
 		objects = new ArrayList<Object>();
 		
-		objects.add(new Stick(1000, 325, 1000, 425, true));
-		objects.add(new Stick(950, 375, 1050, 375, true));
-		objects.add(new Stick(75, 275, 1125, 275, true));
-		objects.add(new Stick(75, 325, 1125, 325, true));
-		objects.add(new Stick(75, 375, 1125, 375, true));
-		objects.add(new Stick(75, 425, 1125, 425, true));
-		objects.add(new Stick(75, 325, 75, 375, true));
-		objects.add(new Stick(1125, 325, 1125, 375, true));
-		objects.add(new Stick(25, 325, 25, 375, true));
-		objects.add(new Stick(1175, 325, 1175, 375, true));
+		objects.add(new Stick(1000, 325, 1000, 425, 0.014));
+		objects.add(new Stick(950, 375, 1050, 375, 0.014));
+		
+		
+		objects.add(new Stick(75, 275, 1125, 275));
+		objects.add(new Stick(75, 325, 1125, 325));
+		objects.add(new Stick(75, 375, 1125, 375));
+		objects.add(new Stick(75, 425, 1125, 425));
+		objects.add(new Stick(75, 325, 75, 375));
+		objects.add(new Stick(1125, 325, 1125, 375));
+		objects.add(new Stick(25, 325, 25, 375));
+		objects.add(new Stick(1175, 325, 1175, 375));
 
-		objects.add(new Stick(25, 325, 75 - 50 / Math.sqrt(2), 325 - 50 / Math.sqrt(2), true));
-		objects.add(new Stick(75 - 50 / Math.sqrt(2), 325 - 50 / Math.sqrt(2), 75, 275, true));
+		objects.add(new Stick(25, 325, 75 - 50 / Math.sqrt(2), 325 - 50 / Math.sqrt(2)));
+		objects.add(new Stick(75 - 50 / Math.sqrt(2), 325 - 50 / Math.sqrt(2), 75, 275));
 		
-		objects.add(new Stick(25, 375, 75 - 50 / Math.sqrt(2), 375 + 50 / Math.sqrt(2), true));
-		objects.add(new Stick(75 - 50 / Math.sqrt(2), 375 + 50 / Math.sqrt(2), 75, 425, true));
+		objects.add(new Stick(25, 375, 75 - 50 / Math.sqrt(2), 375 + 50 / Math.sqrt(2)));
+		objects.add(new Stick(75 - 50 / Math.sqrt(2), 375 + 50 / Math.sqrt(2), 75, 425));
 		
-		objects.add(new Stick(1175, 325, 1125 + 50 / Math.sqrt(2), 325 - 50 / Math.sqrt(2), true));
-		objects.add(new Stick(1125 + 50 / Math.sqrt(2), 325 - 50 / Math.sqrt(2), 1125, 275, true));
+		objects.add(new Stick(1175, 325, 1125 + 50 / Math.sqrt(2), 325 - 50 / Math.sqrt(2)));
+		objects.add(new Stick(1125 + 50 / Math.sqrt(2), 325 - 50 / Math.sqrt(2), 1125, 275));
 		
-		objects.add(new Stick(1175, 375, 1125 + 50 / Math.sqrt(2), 375 + 50 / Math.sqrt(2), true));
-		objects.add(new Stick(1125 + 50 / Math.sqrt(2), 375 + 50 / Math.sqrt(2), 1125, 425, true));
+		objects.add(new Stick(1175, 375, 1125 + 50 / Math.sqrt(2), 375 + 50 / Math.sqrt(2)));
+		objects.add(new Stick(1125 + 50 / Math.sqrt(2), 375 + 50 / Math.sqrt(2), 1125, 425));
 		
 		// for OS X
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -136,7 +138,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	public void actionPerformed(ActionEvent e) {
 		if(!ifPaused){
 			
-			waterEngine(16);
+			waterEngine(8);
 
 			frame++;
 			frame = frame % 4;
@@ -284,6 +286,17 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 						g.drawOval(((mouseX - 25) / 50) * 50 + 70 - 10 * j - 2 , ((mouseY - 25) / 50) * 50 + 70 - 10 * i - 2, 4, 4);
 				
 				break;
+				
+			case 7:
+				g.setColor(Color.cyan);
+				g.drawString("  mode : motor", mouseX, mouseY);
+				
+				g.setColor(Color.orange);
+				g.drawLine(((int) (mouseX - 25) / 50) * 50, ((int) mouseY / 50) * 50 + 25,
+				((int) (mouseX - 25) / 50) * 50 + 100, ((int) mouseY / 50) * 50 + 25);
+				g.drawLine(((int) (mouseX - 25) / 50) * 50 + 50, ((int) mouseY / 50) * 50 - 25,
+						((int) (mouseX - 25) / 50) * 50 + 50, ((int) mouseY / 50) * 50 + 75);
+				break;
 			}
 			if(ifPaused) g.drawString("Paused", 10, 15);
 			
@@ -296,22 +309,17 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		
 		if (length < 50 && length > 0) {
 			// constant is just...optional??(임의의)
-			double force = 4 * water1.charge * water2.charge / (length * length);
-			if (force > 4)
-				force = 4;
+			double force = 12 * water1.charge * water2.charge / (length * length);
+			if (force > 12)
+				force = 12;
 			double forceX = force * (water1.lx - water2.lx) / length;
 			double forceY = force * (water1.ly - water2.ly) / length;
 
-			if (!water1.ifStatic) {
-				
-				water1.vx += forceX / water1.mass;
-				water1.vy += forceY / water1.mass;
-			}
+			water1.vx += forceX / water1.mass;
+			water1.vy += forceY / water1.mass;
 
-			if (!water2.ifStatic) {
-				water2.vx += -forceX / water2.mass;
-				water2.vy += -forceY / water2.mass;
-			}
+			water2.vx += -forceX / water2.mass;
+			water2.vy += -forceY / water2.mass;
 		}
 	}
 
@@ -332,6 +340,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		
 		public void run() {
 			//System.out.println("연산이 시작됩니다.");
+			long a = System.currentTimeMillis();
 			for(int i = start; i < end; i++){
 				for (int j = i + 1; j < objects.size(); j++) {
 
@@ -349,17 +358,17 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 				}
 			}
-			//System.out.println("연산이 완료되었습니다.");
+			long b = System.currentTimeMillis();
+			//System.out.println(start+":"+end+" 연산이 완료되었습니다." + "실행 시간 : " +  (b - a) );
 
 		}
 	}
 	public void waterEngine(int frequency) {
 		for (int n = 0; n < frequency; n++) {
-			((Stick) objects.get(0)).spin(0.01745/8);
-			((Stick) objects.get(1)).spin(0.01745/8);
 			// force between two water
 			int thread0 = 0;
-			int thread1 = (int) (0.1339 * objects.size());
+			//int thread1 = (int) (0.1339 * objects.size());
+			int thread1 = (int) (0.08 * objects.size());
 			int thread2 = (int) (0.2928 * objects.size());
 			int thread3 = (int) (0.5 * objects.size());
 			int thread4 = objects.size();
@@ -385,19 +394,16 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 			//System.out.println("calculation finished!");
 			
 			for (int i = 0; i < objects.size(); i++) {
-				// visual.
-				// <- red, -> cyan
+				// update..
 				if (objects.get(i).getClass() == classWater.getClass()) {
 					Water cacheWater = (Water) objects.get(i);
-					
-					if (cacheWater.vx < 0)
-						cacheWater.color = Color.red;
-					else
-						cacheWater.color = Color.cyan;
-					
+
 					cacheWater.update();
-					cacheWater.vx *= 0.988;
-					cacheWater.vy *= 0.988;
+					cacheWater.vx *= 0.996;
+					cacheWater.vy *= 0.996;
+				} else if(objects.get(i).getClass() == classStick.getClass()) {
+					Stick cacheStick = (Stick) objects.get(i);
+					cacheStick.update();
 				}
 
 			}
@@ -419,7 +425,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 			break;
 		case 3:
 			objects.add(new Stick(((int) (e.getX() - 25) / 50) * 50 + 25, ((int) e.getY() / 50) * 50 + 25,
-					((int) (e.getX() - 25) / 50) * 50 + 75, ((int) e.getY() / 50) * 50 + 25, true));
+					((int) (e.getX() - 25) / 50) * 50 + 75, ((int) e.getY() / 50) * 50 + 25));
 			break;
 
 		}
@@ -428,7 +434,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	
 	@Override
 	public void mousePressed(MouseEvent e) {
-
+		
 	}
 
 	@Override
