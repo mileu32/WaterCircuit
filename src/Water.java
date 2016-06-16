@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Graphics;
 import java.util.Random;
 
 public class Water {
@@ -87,6 +88,13 @@ public class Water {
 
 	}
 
+	public void draw(Graphics g){
+		if (this.ifDraw) {
+			g.setColor(this.color);
+			g.drawOval((int) (this.lx - this.size / 2), (int) (this.ly - this.size / 2), (int) this.size, (int) this.size);
+		}
+	}
+	
 	public double check(int mouseX, int mouseY) {
 		// TODO Auto-generated method stub
 

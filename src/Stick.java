@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Graphics;
 
 class Stick {
 
@@ -44,6 +45,7 @@ class Stick {
 		this.color = color;
 
 		this.ifStatic = ifStatic;
+		this.ifDraw = true;
 
 		double length = Math.sqrt((lx2 - lx1) * (lx2 - lx1) + (ly2 - ly1) * (ly2 - ly1));
 
@@ -57,7 +59,7 @@ class Stick {
 
 		else{
 			for (int i = 0; i < water.length; i++)
-				this.water[i] = new Water(lx1 + (lx2 - lx1) * i / (waterCount - 1), ly1 + (ly2 - ly1) * i / (waterCount - 1), 0, 0, 2, true, true);
+				this.water[i] = new Water(lx1 + (lx2 - lx1) * i / (waterCount - 1), ly1 + (ly2 - ly1) * i / (waterCount - 1), 0, 0, 1.5, true, true);
 			this.water[0].charge = 0.9;
 			this.water[water.length - 1].charge = 0.9;
 		}
@@ -141,6 +143,14 @@ class Stick {
 		if(rotateTheta!=0) spin(rotateTheta);
 	}
 
+	public void draw(Graphics g){
+		if (this.ifDraw) {
+			g.setColor(this.color);;
+			g.drawLine((int) this.lx1, (int) this.ly1, (int) this.lx2, (int) this.ly2);
+		}
+	}
+	
+	
 	public double check(int mouseX, int mouseY) {
 
 		return 0;

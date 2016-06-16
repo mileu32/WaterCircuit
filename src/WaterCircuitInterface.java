@@ -31,8 +31,8 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 	Water classWater = new Water(0,0);
 	Stick classStick = new Stick(0,0,10,10);
 	
-	final int update_period = 60;
-	final int max_number = 000;
+	final int update_period = 16;
+	final int max_number = 900;
 
 	JMenuBar menuBar;
 	JMenu fileMenu;
@@ -53,16 +53,15 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	WaterCircuitInterface() {
 
-		super("WaterCircuit v0.2.0b1 (BUILD 23) by mileu");
+		super("WaterCircuit v0.2.0b1 (BUILD 24) by mileu");
 
 		objects = new ArrayList<Object>();
 		
-		objects.add(new Stick(600, 325, 600, 425, false));
+		//objects.add(new Stick(600, 325, 600, 425, false));
 		
 		
 		objects.add(new Stick(1000, 325, 1000, 425, 0.014));
 		objects.add(new Stick(950, 375, 1050, 375, 0.014));
-		
 		
 		objects.add(new Stick(75, 275, 1125, 275));
 		objects.add(new Stick(75, 325, 1125, 325));
@@ -84,6 +83,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		
 		objects.add(new Stick(1175, 375, 1125 + 50 / Math.sqrt(2), 375 + 50 / Math.sqrt(2)));
 		objects.add(new Stick(1125 + 50 / Math.sqrt(2), 375 + 50 / Math.sqrt(2), 1125, 425));
+		
 		
 		// for OS X
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -116,6 +116,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		canvas.addMouseWheelListener(this);
 		addKeyListener(this);
 		add(canvas);
+		
 		Timer t = new Timer(update_period, this);
 		t.start();
 
@@ -139,16 +140,21 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		long a = System.currentTimeMillis();
 		if(!ifPaused){
 			
-			waterEngine(8);
+			waterEngine(4);
 
 			frame++;
 			frame = frame % 4;
 			if (frame == 0 && objects.size() < max_number)
 			objects.add(new Water(950, 400));
 		}
+		long b = System.currentTimeMillis();
 		canvas.repaint();
+		long c = System.currentTimeMillis();
+		System.out.println("물리엔진 " + (b - a) + "ms소요, 그래픽 " + (c - b) + "ms 소요 ") ;
+		if(c!=a) System.out.println(1000/(c - a) + "fps");
 	}
 
 	class WaterCircuitCanvas extends JPanel {
@@ -171,20 +177,15 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 			
 			for (int i = 0; i < objects.size(); i++) {
+				
 				if (objects.get(i).getClass() == classWater.getClass()) {
 					Water cacheWater = (Water) objects.get(i);
+					cacheWater.draw(g);
 					
-					if (cacheWater.ifDraw) {
-						g.setColor(cacheWater.color);
-						g.drawOval((int) (cacheWater.lx - cacheWater.size / 2),
-								(int) (cacheWater.ly - cacheWater.size / 2), (int) cacheWater.size,
-								(int) cacheWater.size);
-					}
 				} else if (objects.get(i).getClass() == classStick.getClass()) {
 					Stick cacheStick = (Stick) objects.get(i);
-					g.setColor(cacheStick.color);
-					g.drawLine((int) cacheStick.lx1, (int) cacheStick.ly1, (int) cacheStick.lx2, (int) cacheStick.ly2);
-
+					cacheStick.draw(g);
+					
 				}
 			}
 			
@@ -313,8 +314,8 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		if (length < 50 && length > 0) {
 			// constant is just...optional??(임의의)
 			double force = 12 * water1.charge * water2.charge / (length * length);
-			if (force > 12)
-				force = 12;
+			if (force > 3) force = 3;
+			
 			double forceX = force * (water1.lx - water2.lx) / length;
 			double forceY = force * (water1.ly - water2.ly) / length;
 
@@ -342,7 +343,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		}
 		
 		public void run() {
-			//System.out.println("연산이 시작됩니다.");
+			//System.out.println(start + "에서부터 "+ end + "까지 연산이 시작됩니다.");
 			long a = System.currentTimeMillis();
 			for(int i = start; i < end; i++){
 				for (int j = i + 1; j < objects.size(); j++) {
@@ -370,12 +371,11 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 		for (int n = 0; n < frequency; n++) {
 			// force between two water
 			int thread0 = 0;
-			//int thread1 = (int) (0.1339 * objects.size());
-			int thread1 = (int) (0.08 * objects.size());
+			int thread1 = (int) (0.1339 * objects.size());
 			int thread2 = (int) (0.2928 * objects.size());
 			int thread3 = (int) (0.5 * objects.size());
 			int thread4 = objects.size();
-			
+						
 			ThreadEngine te1 = new ThreadEngine(thread0, thread1);
 			ThreadEngine te2 = new ThreadEngine(thread1, thread2);
 			ThreadEngine te3 = new ThreadEngine(thread2, thread3);
@@ -402,8 +402,8 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 					Water cacheWater = (Water) objects.get(i);
 
 					cacheWater.update();
-					cacheWater.vx *= 0.996;
-					cacheWater.vy *= 0.996;
+					cacheWater.vx *= 0.998;
+					cacheWater.vy *= 0.998;
 				} else if(objects.get(i).getClass() == classStick.getClass()) {
 					Stick cacheStick = (Stick) objects.get(i);
 					cacheStick.update();
