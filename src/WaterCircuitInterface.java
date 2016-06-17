@@ -53,8 +53,10 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	WaterCircuitInterface() {
 
-		super("WaterCircuit v0.2.0b1 (BUILD 24) by mileu");
+		super("WaterCircuit v0.2.0b2 (BUILD 25) by mileu");
 
+		new SplashWindow("watercircuit.png", 2500, this);
+		
 		objects = new ArrayList<Object>();
 		
 		//objects.add(new Stick(600, 325, 600, 425, false));
@@ -140,7 +142,7 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		long a = System.currentTimeMillis();
+		//long a = System.currentTimeMillis();
 		if(!ifPaused){
 			
 			waterEngine(4);
@@ -150,11 +152,11 @@ public class WaterCircuitInterface extends JFrame implements ActionListener, Mou
 			if (frame == 0 && objects.size() < max_number)
 			objects.add(new Water(950, 400));
 		}
-		long b = System.currentTimeMillis();
+		//long b = System.currentTimeMillis();
 		canvas.repaint();
-		long c = System.currentTimeMillis();
-		System.out.println("물리엔진 " + (b - a) + "ms소요, 그래픽 " + (c - b) + "ms 소요 ") ;
-		if(c!=a) System.out.println(1000/(c - a) + "fps");
+		//long c = System.currentTimeMillis();
+		//System.out.println("물리엔진 " + (b - a) + "ms소요, 그래픽 " + (c - b) + "ms 소요 ") ;
+		//if(c!=a) System.out.println(1000/(c - a) + "fps");
 	}
 
 	class WaterCircuitCanvas extends JPanel {
